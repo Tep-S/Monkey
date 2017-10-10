@@ -2,6 +2,8 @@
 #include "ui_mainwindow.h"
 #include <QFileDialog>
 #include <QDir>
+#include <QPoint>
+#include <QCursor>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -26,6 +28,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     if (filename.isEmpty()) // Do nothing if filename is empty
         return;*/
+    QPoint pnt = QCursor::pos();
+    qInfo("x %d y %d",pnt.x(), pnt.y());
     cv::Mat img = cv::imread("gta.png", 1);
     if (img.empty())
         return;
