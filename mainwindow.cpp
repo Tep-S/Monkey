@@ -20,14 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-/*
-    QString filename = QFileDialog::getOpenFileName(this,
-                                                    tr("Open Image"),
-                                                    QDir::currentPath(),
-                                                    tr("Files (*.png *.jpg *.tiff *.bmp)"));
 
-    if (filename.isEmpty()) // Do nothing if filename is empty
-        return;*/
     QPoint pnt = QCursor::pos();
     qInfo("x %d y %d",pnt.x(), pnt.y());
     cv::Mat img = cv::imread("gta.png", 1);
@@ -39,9 +32,9 @@ MainWindow::MainWindow(QWidget *parent) :
     cv::Mat imgThresh;
 
     threshold( imgGray, imgThresh, 20, 150, CV_THRESH_BINARY );
-    cv::namedWindow("My Image");
+    //cv::namedWindow("My Image");
         // show the image on window
-    cv::imshow("My Image", imgThresh);
+   // cv::imshow("My Image", imgThresh);
 //cv::String imageName("C:/code/Monkey-master/Monkey-master/pen.png");
     // read an image
   // IplImage* pImg =  cvLoadImage("pen.png", 1);
@@ -50,8 +43,28 @@ MainWindow::MainWindow(QWidget *parent) :
 //    cv::namedWindow("My Image");
     // show the image on window
   //  CvShowImage("My Image", pImg);
+  Connects();
 }
 
+void MainWindow::Connects(){
+    connect(ui->btOpenImage, SIGNAL (clicked()), this, SLOT (OpenImage()));
+}
+
+void MainWindow::OpenImage(){
+
+        imageName = QFileDialog::getOpenFileName(this,
+            tr("Open Image"),QDir::currentPath(),tr("Files (*.png *.jpg *.tiff *.bmp)"));
+
+        if (imageName.isEmpty()) // Do nothing if filename is empty
+            return;
+        cv::Mat img = cv::imread(imageName.toStdString().c_str(), 1);
+        if (img.empty())
+            return;
+        cv::namedWindow("My Image");
+            // show the image on window
+        cv::imshow("My Image", img);
+
+}
 MainWindow::~MainWindow()
 {
     delete ui;

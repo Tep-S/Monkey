@@ -16,6 +16,7 @@ class MapRules
 public:
     MapRules();
 private:
+    void Move();
     void Test();
     QPointF obj;
     float objCourse;

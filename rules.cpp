@@ -19,8 +19,8 @@ void MapRules::Test(){
     for(int i = 0 ; i < n; i++){
         float noise  = ((float)(rand() % 300)) / 100;
         float noise2 = ((float)(rand() % 300)) / 100;
-        road[i].x() = c*i + noise;
-        road[i].y() = c*i + noise2;
+        road[i].setX(c*i + noise);
+        road[i].setY(c*i + noise2);
     }
     for(int i = 0; i < 10; i++);
         GoDot(road[0]);
@@ -37,12 +37,12 @@ void MapRules::AddRoad(){
 
 int MapRules::LoadRoad(){
     //not finished
-    QSettings settings( "road.conf", QSettings::IniFormat );
-    settings.beginGroup( "WINDOW_COORD" );
-    int x1 = settings.value( "x",           -1 ).toInt();
+ //   QSettings settings( "road.conf", QSettings::IniFormat );
+ //   settings.beginGroup( "WINDOW_COORD" );
+ //   int x1 = settings.value( "x",           -1 ).toInt();
 
 }
-float MapRules::DotDist(QPoinFt in1, QPointF in2){
+float MapRules::DotDist(QPointF in1, QPointF in2){
     return sqrt(pow( (in1.x() - in2.x()) , 2) + pow( (in1.y() - in2.y()), 2));
 }
 int MapRules::FindRoad(){

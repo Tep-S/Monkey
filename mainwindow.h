@@ -16,7 +16,12 @@ public:
     ~MainWindow();
 
 private:
+    QString imageName;
     Ui::MainWindow *ui;
+    void Connects();
+
+private slots:
+    void OpenImage();
 };
 
 #endif // MAINWINDOW_H
