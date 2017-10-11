@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include "QPoint"
+#include "QPointF"
 
 class Rules
 {
@@ -15,14 +16,16 @@ class MapRules
 public:
     MapRules();
 private:
-    QPoint obj;
+    void Test();
+    QPointF obj;
     float objCourse;
+    void AddRoad();
     int LoadRoad();
     int FindRoad();
     //
-    int GoDot(QPoint dot);
+    int GoDot(QPointF dot);
     float distPrev;
-    float DotDist(QPoint in1, QPoint in2);
+    float DotDist(QPointF in1, QPointF in2);
 };
 
 #endif // RULES_H

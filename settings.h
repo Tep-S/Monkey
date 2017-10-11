@@ -8,6 +8,7 @@ class Settings
 public:
     Settings();
 private:
+    void Move();
     QSettings conf;
     void Load();
     void LoadLogic();
