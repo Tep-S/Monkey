@@ -19,9 +19,13 @@ private:
     QString imageName;
     Ui::MainWindow *ui;
     void Connects();
+    void ImgAct(int command);
 
 private slots:
     void OpenImage();
+    void SaveCommand();
+    void RemoveCommand();
+    void SaveSequence();
 };
 
 #endif // MAINWINDOW_H

@@ -48,6 +48,10 @@ public:
     QLabel *lbLines;
     QSlider *hsThreshold_2;
     QSlider *hsThreshold_3;
+    QCheckBox *cbGrayscale;
+    QPushButton *btSaveCommand;
+    QPushButton *btSaveSequence;
+    QPushButton *btRemoveCommand;
     QWidget *tab_2;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
@@ -57,12 +61,12 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(673, 472);
+        MainWindow->resize(1093, 769);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         tbMain = new QTabWidget(centralWidget);
         tbMain->setObjectName(QStringLiteral("tbMain"));
-        tbMain->setGeometry(QRect(0, 0, 491, 411));
+        tbMain->setGeometry(QRect(0, 0, 1091, 711));
         tab = new QWidget();
         tab->setObjectName(QStringLiteral("tab"));
         hzColorV = new QSlider(tab);
@@ -115,6 +119,18 @@ public:
         hsThreshold_3->setObjectName(QStringLiteral("hsThreshold_3"));
         hsThreshold_3->setGeometry(QRect(170, 100, 61, 21));
         hsThreshold_3->setOrientation(Qt::Horizontal);
+        cbGrayscale = new QCheckBox(tab);
+        cbGrayscale->setObjectName(QStringLiteral("cbGrayscale"));
+        cbGrayscale->setGeometry(QRect(340, 40, 70, 17));
+        btSaveCommand = new QPushButton(tab);
+        btSaveCommand->setObjectName(QStringLiteral("btSaveCommand"));
+        btSaveCommand->setGeometry(QRect(340, 80, 91, 23));
+        btSaveSequence = new QPushButton(tab);
+        btSaveSequence->setObjectName(QStringLiteral("btSaveSequence"));
+        btSaveSequence->setGeometry(QRect(340, 140, 91, 23));
+        btRemoveCommand = new QPushButton(tab);
+        btRemoveCommand->setObjectName(QStringLiteral("btRemoveCommand"));
+        btRemoveCommand->setGeometry(QRect(340, 100, 101, 23));
         tbMain->addTab(tab, QString());
         tab_2 = new QWidget();
         tab_2->setObjectName(QStringLiteral("tab_2"));
@@ -122,7 +138,7 @@ public:
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 673, 21));
+        menuBar->setGeometry(QRect(0, 0, 1093, 21));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -152,6 +168,10 @@ public:
         lbImage->setText(QApplication::translate("MainWindow", "Image Name", Q_NULLPTR));
         cbLines->setText(QString());
         lbLines->setText(QApplication::translate("MainWindow", "Lines", Q_NULLPTR));
+        cbGrayscale->setText(QApplication::translate("MainWindow", "Grayscale", Q_NULLPTR));
+        btSaveCommand->setText(QApplication::translate("MainWindow", "Save Command", Q_NULLPTR));
+        btSaveSequence->setText(QApplication::translate("MainWindow", "Save Sequence", Q_NULLPTR));
+        btRemoveCommand->setText(QApplication::translate("MainWindow", "Remove Command", Q_NULLPTR));
         tbMain->setTabText(tbMain->indexOf(tab), QApplication::translate("MainWindow", "Tab 1", Q_NULLPTR));
         tbMain->setTabText(tbMain->indexOf(tab_2), QApplication::translate("MainWindow", "Tab 2", Q_NULLPTR));
     } // retranslateUi

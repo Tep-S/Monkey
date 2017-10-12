@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>673</width>
-    <height>472</height>
+    <width>1093</width>
+    <height>769</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,8 +19,8 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>491</width>
-      <height>411</height>
+      <width>1091</width>
+      <height>711</height>
      </rect>
     </property>
     <property name="currentIndex">
@@ -225,6 +225,58 @@
        <enum>Qt::Horizontal</enum>
       </property>
      </widget>
+     <widget class="QCheckBox" name="cbGrayscale">
+      <property name="geometry">
+       <rect>
+        <x>340</x>
+        <y>40</y>
+        <width>70</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Grayscale</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btSaveCommand">
+      <property name="geometry">
+       <rect>
+        <x>340</x>
+        <y>80</y>
+        <width>91</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Save Command</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btSaveSequence">
+      <property name="geometry">
+       <rect>
+        <x>340</x>
+        <y>140</y>
+        <width>91</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Save Sequence</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btRemoveCommand">
+      <property name="geometry">
+       <rect>
+        <x>340</x>
+        <y>100</y>
+        <width>101</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Remove Command</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
@@ -238,7 +290,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>673</width>
+     <width>1093</width>
      <height>21</height>
     </rect>
    </property>
