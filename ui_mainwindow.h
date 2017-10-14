@@ -16,6 +16,8 @@
 #include <QtWidgets/QCheckBox>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QListWidget>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
@@ -52,6 +54,8 @@ public:
     QPushButton *btSaveCommand;
     QPushButton *btSaveSequence;
     QPushButton *btRemoveCommand;
+    QListWidget *lsMain;
+    QLineEdit *lnSequence;
     QWidget *tab_2;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
@@ -101,7 +105,7 @@ public:
         cbThresh->setGeometry(QRect(240, 70, 21, 17));
         btOpenImage = new QPushButton(tab);
         btOpenImage->setObjectName(QStringLiteral("btOpenImage"));
-        btOpenImage->setGeometry(QRect(340, 0, 75, 23));
+        btOpenImage->setGeometry(QRect(340, 0, 121, 23));
         lbImage = new QLabel(tab);
         lbImage->setObjectName(QStringLiteral("lbImage"));
         lbImage->setGeometry(QRect(40, 140, 131, 21));
@@ -124,13 +128,19 @@ public:
         cbGrayscale->setGeometry(QRect(340, 40, 70, 17));
         btSaveCommand = new QPushButton(tab);
         btSaveCommand->setObjectName(QStringLiteral("btSaveCommand"));
-        btSaveCommand->setGeometry(QRect(340, 80, 91, 23));
+        btSaveCommand->setGeometry(QRect(340, 80, 141, 23));
         btSaveSequence = new QPushButton(tab);
         btSaveSequence->setObjectName(QStringLiteral("btSaveSequence"));
-        btSaveSequence->setGeometry(QRect(340, 140, 91, 23));
+        btSaveSequence->setGeometry(QRect(340, 140, 151, 23));
         btRemoveCommand = new QPushButton(tab);
         btRemoveCommand->setObjectName(QStringLiteral("btRemoveCommand"));
-        btRemoveCommand->setGeometry(QRect(340, 100, 101, 23));
+        btRemoveCommand->setGeometry(QRect(340, 100, 151, 23));
+        lsMain = new QListWidget(tab);
+        lsMain->setObjectName(QStringLiteral("lsMain"));
+        lsMain->setGeometry(QRect(160, 260, 256, 192));
+        lnSequence = new QLineEdit(tab);
+        lnSequence->setObjectName(QStringLiteral("lnSequence"));
+        lnSequence->setGeometry(QRect(510, 140, 113, 20));
         tbMain->addTab(tab, QString());
         tab_2 = new QWidget();
         tab_2->setObjectName(QStringLiteral("tab_2"));
@@ -172,6 +182,7 @@ public:
         btSaveCommand->setText(QApplication::translate("MainWindow", "Save Command", Q_NULLPTR));
         btSaveSequence->setText(QApplication::translate("MainWindow", "Save Sequence", Q_NULLPTR));
         btRemoveCommand->setText(QApplication::translate("MainWindow", "Remove Command", Q_NULLPTR));
+        lnSequence->setText(QApplication::translate("MainWindow", "seq.conf", Q_NULLPTR));
         tbMain->setTabText(tbMain->indexOf(tab), QApplication::translate("MainWindow", "Tab 1", Q_NULLPTR));
         tbMain->setTabText(tbMain->indexOf(tab_2), QApplication::translate("MainWindow", "Tab 2", Q_NULLPTR));
     } // retranslateUi

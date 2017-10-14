@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "sequence.h"
 
 namespace Ui {
 class MainWindow;
@@ -16,7 +17,7 @@ public:
     ~MainWindow();
 
 private:
-    QString imageName;
+    Sequence* seq;
     Ui::MainWindow *ui;
     void Connects();
     void ImgAct(int command);

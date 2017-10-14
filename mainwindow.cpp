@@ -4,20 +4,16 @@
 #include <QDir>
 #include <QPoint>
 #include <QCursor>
+#include <QSettings>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
-
-#include <opencv2/core/core_c.h>
 #include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/imgproc/imgproc_c.h>
-#include <opencv2/highgui/highgui_c.h>
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    seq(new Sequence())
 {
     ui->setupUi(this);
 
@@ -59,49 +55,7 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 
 void MainWindow::ImgAct(int command){
-    cv::Mat img;
-    int param1, param2;
-    enum{
-        Do_Gray,
-        Do_Thresh,
-        Do_Canny,
-        Do_Contours,
-        Do_Bgr2Hsv,
-        Do_Blur
-    };
-
-    switch(command){
-    case Do_Gray:{
-        cv::cvtColor(img, img, CV_BGR2GRAY);
-    }
-        break;
-    case Do_Thresh:{
-        //need gray in
-        threshold( img, img, param1, param2, CV_THRESH_BINARY );//p1 20 p2 150
-    }
-        break;
-    case Do_Canny:{
-        Canny( img, img, param1, param2, 3 );//check param!
-    }
-        break;
-    case Do_Contours:{
-       // vector<vector<Point> > contours;
-       // vector<Vec4i> hierarchy;
-        //need canny before
-       // findContours( img, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
-    }
-        break;
-    case Do_Bgr2Hsv:{
-        cv::cvtColor(img, img, CV_BGR2HSV);
-    }
-        break;
-    case Do_Blur:{
-        //src gray?
-   //     cv::blur( img, img, Size(3,3));
-    }
-        break;
-    }
-
+    seq->ImgAct(command);
 }
 
 void MainWindow::Connects(){
@@ -112,33 +66,21 @@ void MainWindow::Connects(){
 }
 
 void MainWindow::SaveCommand(){
-//which command
-//params
-//add to table
+    ui->lsMain->addItem(seq->SaveCommand());
 }
 
 void MainWindow::RemoveCommand(){
-//remove last row
+    seq->RemoveCommand();
 }
 
 void MainWindow::SaveSequence(){
-//save all rows to file
+    seq->SaveSequence(ui->lnSequence->text());
 }
 
 void MainWindow::OpenImage(){
-
-        imageName = QFileDialog::getOpenFileName(this,
-            tr("Open Image"),QDir::currentPath(),tr("Files (*.png *.jpg *.tiff *.bmp)"));
-
-        if (imageName.isEmpty()) // Do nothing if filename is empty
-            return;
-        cv::Mat img = cv::imread(imageName.toStdString().c_str(), 1);
-        if (img.empty())
-            return;
-        cv::namedWindow("My Image");
-            // show the image on window
-        cv::imshow("My Image", img);
-
+    QString imageName = QFileDialog::getOpenFileName(this,
+        tr("Open Image"),QDir::currentPath(),tr("Files (*.png *.jpg *.tiff *.bmp)"));
+    seq->OpenImage(imageName);
 }
 MainWindow::~MainWindow()
 {

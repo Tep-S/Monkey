@@ -152,7 +152,7 @@
        <rect>
         <x>340</x>
         <y>0</y>
-        <width>75</width>
+        <width>121</width>
         <height>23</height>
        </rect>
       </property>
@@ -243,7 +243,7 @@
        <rect>
         <x>340</x>
         <y>80</y>
-        <width>91</width>
+        <width>141</width>
         <height>23</height>
        </rect>
       </property>
@@ -256,7 +256,7 @@
        <rect>
         <x>340</x>
         <y>140</y>
-        <width>91</width>
+        <width>151</width>
         <height>23</height>
        </rect>
       </property>
@@ -269,12 +269,35 @@
        <rect>
         <x>340</x>
         <y>100</y>
-        <width>101</width>
+        <width>151</width>
         <height>23</height>
        </rect>
       </property>
       <property name="text">
        <string>Remove Command</string>
+      </property>
+     </widget>
+     <widget class="QListWidget" name="lsMain">
+      <property name="geometry">
+       <rect>
+        <x>160</x>
+        <y>260</y>
+        <width>256</width>
+        <height>192</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lnSequence">
+      <property name="geometry">
+       <rect>
+        <x>510</x>
+        <y>140</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>seq.conf</string>
       </property>
      </widget>
     </widget>
