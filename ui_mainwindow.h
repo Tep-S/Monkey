@@ -14,6 +14,7 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QCheckBox>
+#include <QtWidgets/QComboBox>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
@@ -21,7 +22,6 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
-#include <QtWidgets/QSlider>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTabWidget>
 #include <QtWidgets/QToolBar>
@@ -35,27 +35,20 @@ public:
     QWidget *centralWidget;
     QTabWidget *tbMain;
     QWidget *tab;
-    QSlider *hzColorV;
-    QSlider *hsBlurV;
-    QSlider *hsThreshold;
-    QLabel *lbColor;
-    QLabel *lbThreshold;
-    QLabel *lbBlur;
-    QCheckBox *cbColor;
-    QCheckBox *cbBlur;
-    QCheckBox *cbThresh;
     QPushButton *btOpenImage;
     QLabel *lbImage;
-    QCheckBox *cbLines;
-    QLabel *lbLines;
-    QSlider *hsThreshold_2;
-    QSlider *hsThreshold_3;
     QCheckBox *cbGrayscale;
     QPushButton *btSaveCommand;
     QPushButton *btSaveSequence;
     QPushButton *btRemoveCommand;
     QListWidget *lsMain;
     QLineEdit *lnSequence;
+    QPushButton *btLoadSequence;
+    QComboBox *comboBox;
+    QPushButton *btDraw;
+    QLineEdit *lnParam1;
+    QLineEdit *lnParam2;
+    QLineEdit *lnParam3;
     QWidget *tab_2;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
@@ -73,74 +66,48 @@ public:
         tbMain->setGeometry(QRect(0, 0, 1091, 711));
         tab = new QWidget();
         tab->setObjectName(QStringLiteral("tab"));
-        hzColorV = new QSlider(tab);
-        hzColorV->setObjectName(QStringLiteral("hzColorV"));
-        hzColorV->setGeometry(QRect(100, 10, 131, 21));
-        hzColorV->setOrientation(Qt::Horizontal);
-        hsBlurV = new QSlider(tab);
-        hsBlurV->setObjectName(QStringLiteral("hsBlurV"));
-        hsBlurV->setGeometry(QRect(100, 40, 131, 21));
-        hsBlurV->setOrientation(Qt::Horizontal);
-        hsThreshold = new QSlider(tab);
-        hsThreshold->setObjectName(QStringLiteral("hsThreshold"));
-        hsThreshold->setGeometry(QRect(100, 70, 131, 21));
-        hsThreshold->setOrientation(Qt::Horizontal);
-        lbColor = new QLabel(tab);
-        lbColor->setObjectName(QStringLiteral("lbColor"));
-        lbColor->setGeometry(QRect(30, 10, 61, 16));
-        lbThreshold = new QLabel(tab);
-        lbThreshold->setObjectName(QStringLiteral("lbThreshold"));
-        lbThreshold->setGeometry(QRect(30, 70, 47, 13));
-        lbBlur = new QLabel(tab);
-        lbBlur->setObjectName(QStringLiteral("lbBlur"));
-        lbBlur->setGeometry(QRect(30, 40, 47, 13));
-        cbColor = new QCheckBox(tab);
-        cbColor->setObjectName(QStringLiteral("cbColor"));
-        cbColor->setGeometry(QRect(240, 10, 21, 17));
-        cbBlur = new QCheckBox(tab);
-        cbBlur->setObjectName(QStringLiteral("cbBlur"));
-        cbBlur->setGeometry(QRect(240, 40, 21, 17));
-        cbThresh = new QCheckBox(tab);
-        cbThresh->setObjectName(QStringLiteral("cbThresh"));
-        cbThresh->setGeometry(QRect(240, 70, 21, 17));
         btOpenImage = new QPushButton(tab);
         btOpenImage->setObjectName(QStringLiteral("btOpenImage"));
         btOpenImage->setGeometry(QRect(340, 0, 121, 23));
         lbImage = new QLabel(tab);
         lbImage->setObjectName(QStringLiteral("lbImage"));
         lbImage->setGeometry(QRect(40, 140, 131, 21));
-        cbLines = new QCheckBox(tab);
-        cbLines->setObjectName(QStringLiteral("cbLines"));
-        cbLines->setGeometry(QRect(240, 100, 21, 17));
-        lbLines = new QLabel(tab);
-        lbLines->setObjectName(QStringLiteral("lbLines"));
-        lbLines->setGeometry(QRect(30, 100, 47, 13));
-        hsThreshold_2 = new QSlider(tab);
-        hsThreshold_2->setObjectName(QStringLiteral("hsThreshold_2"));
-        hsThreshold_2->setGeometry(QRect(100, 100, 61, 21));
-        hsThreshold_2->setOrientation(Qt::Horizontal);
-        hsThreshold_3 = new QSlider(tab);
-        hsThreshold_3->setObjectName(QStringLiteral("hsThreshold_3"));
-        hsThreshold_3->setGeometry(QRect(170, 100, 61, 21));
-        hsThreshold_3->setOrientation(Qt::Horizontal);
         cbGrayscale = new QCheckBox(tab);
         cbGrayscale->setObjectName(QStringLiteral("cbGrayscale"));
         cbGrayscale->setGeometry(QRect(340, 40, 70, 17));
         btSaveCommand = new QPushButton(tab);
         btSaveCommand->setObjectName(QStringLiteral("btSaveCommand"));
-        btSaveCommand->setGeometry(QRect(340, 80, 141, 23));
+        btSaveCommand->setGeometry(QRect(410, 230, 81, 23));
         btSaveSequence = new QPushButton(tab);
         btSaveSequence->setObjectName(QStringLiteral("btSaveSequence"));
-        btSaveSequence->setGeometry(QRect(340, 140, 151, 23));
+        btSaveSequence->setGeometry(QRect(470, 270, 151, 23));
         btRemoveCommand = new QPushButton(tab);
         btRemoveCommand->setObjectName(QStringLiteral("btRemoveCommand"));
-        btRemoveCommand->setGeometry(QRect(340, 100, 151, 23));
+        btRemoveCommand->setGeometry(QRect(500, 230, 91, 23));
         lsMain = new QListWidget(tab);
         lsMain->setObjectName(QStringLiteral("lsMain"));
-        lsMain->setGeometry(QRect(160, 260, 256, 192));
+        lsMain->setGeometry(QRect(30, 270, 431, 151));
         lnSequence = new QLineEdit(tab);
         lnSequence->setObjectName(QStringLiteral("lnSequence"));
-        lnSequence->setGeometry(QRect(510, 140, 113, 20));
+        lnSequence->setGeometry(QRect(620, 270, 113, 20));
+        btLoadSequence = new QPushButton(tab);
+        btLoadSequence->setObjectName(QStringLiteral("btLoadSequence"));
+        btLoadSequence->setGeometry(QRect(470, 290, 151, 23));
+        comboBox = new QComboBox(tab);
+        comboBox->setObjectName(QStringLiteral("comboBox"));
+        comboBox->setGeometry(QRect(30, 230, 101, 22));
+        btDraw = new QPushButton(tab);
+        btDraw->setObjectName(QStringLiteral("btDraw"));
+        btDraw->setGeometry(QRect(600, 230, 91, 23));
+        lnParam1 = new QLineEdit(tab);
+        lnParam1->setObjectName(QStringLiteral("lnParam1"));
+        lnParam1->setGeometry(QRect(140, 230, 61, 20));
+        lnParam2 = new QLineEdit(tab);
+        lnParam2->setObjectName(QStringLiteral("lnParam2"));
+        lnParam2->setGeometry(QRect(210, 230, 61, 20));
+        lnParam3 = new QLineEdit(tab);
+        lnParam3->setObjectName(QStringLiteral("lnParam3"));
+        lnParam3->setGeometry(QRect(280, 230, 61, 20));
         tbMain->addTab(tab, QString());
         tab_2 = new QWidget();
         tab_2->setObjectName(QStringLiteral("tab_2"));
@@ -168,21 +135,28 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", Q_NULLPTR));
-        lbColor->setText(QApplication::translate("MainWindow", "Color", Q_NULLPTR));
-        lbThreshold->setText(QApplication::translate("MainWindow", "Threshold", Q_NULLPTR));
-        lbBlur->setText(QApplication::translate("MainWindow", "Blur", Q_NULLPTR));
-        cbColor->setText(QString());
-        cbBlur->setText(QString());
-        cbThresh->setText(QString());
         btOpenImage->setText(QApplication::translate("MainWindow", "Open Image", Q_NULLPTR));
         lbImage->setText(QApplication::translate("MainWindow", "Image Name", Q_NULLPTR));
-        cbLines->setText(QString());
-        lbLines->setText(QApplication::translate("MainWindow", "Lines", Q_NULLPTR));
         cbGrayscale->setText(QApplication::translate("MainWindow", "Grayscale", Q_NULLPTR));
-        btSaveCommand->setText(QApplication::translate("MainWindow", "Save Command", Q_NULLPTR));
+        btSaveCommand->setText(QApplication::translate("MainWindow", "Add", Q_NULLPTR));
         btSaveSequence->setText(QApplication::translate("MainWindow", "Save Sequence", Q_NULLPTR));
-        btRemoveCommand->setText(QApplication::translate("MainWindow", "Remove Command", Q_NULLPTR));
+        btRemoveCommand->setText(QApplication::translate("MainWindow", "Remove", Q_NULLPTR));
         lnSequence->setText(QApplication::translate("MainWindow", "seq.conf", Q_NULLPTR));
+        btLoadSequence->setText(QApplication::translate("MainWindow", "Load Sequence", Q_NULLPTR));
+        comboBox->clear();
+        comboBox->insertItems(0, QStringList()
+         << QApplication::translate("MainWindow", "Grayscale", Q_NULLPTR)
+         << QApplication::translate("MainWindow", "Threshing", Q_NULLPTR)
+         << QApplication::translate("MainWindow", "Canny", Q_NULLPTR)
+         << QApplication::translate("MainWindow", "Contour", Q_NULLPTR)
+         << QApplication::translate("MainWindow", "Bgr2Hsv", Q_NULLPTR)
+         << QApplication::translate("MainWindow", "Blur", Q_NULLPTR)
+         << QApplication::translate("MainWindow", "Hsv2Bgr", Q_NULLPTR)
+        );
+        btDraw->setText(QApplication::translate("MainWindow", "Draw", Q_NULLPTR));
+        lnParam1->setText(QApplication::translate("MainWindow", "1", Q_NULLPTR));
+        lnParam2->setText(QApplication::translate("MainWindow", "2", Q_NULLPTR));
+        lnParam3->setText(QApplication::translate("MainWindow", "3", Q_NULLPTR));
         tbMain->setTabText(tbMain->indexOf(tab), QApplication::translate("MainWindow", "Tab 1", Q_NULLPTR));
         tbMain->setTabText(tbMain->indexOf(tab_2), QApplication::translate("MainWindow", "Tab 2", Q_NULLPTR));
     } // retranslateUi

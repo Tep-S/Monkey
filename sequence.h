@@ -29,12 +29,17 @@ class Sequence
 public:
     Sequence();
     void OpenImage(QString imageName);
-    QString SaveCommand();
+    QString SaveCommand(SaveCmd cmdIn);
     void RemoveCommand();
     void SaveSequence(QString filename);
-    void LoadSequence();
-    void ImgAct(int command);
-
+    void LoadSequence(QString filename);
+    void ImgAct(int command, float *par, cv::Mat &outImg);
+    void Draw();
+private:
+    cv::Mat img;
+    cv::Mat imgClean;
+    SaveCmd cmdBuff[20];
+    int cmdCnt;
 };
 
 #endif // SEQUENCE_H

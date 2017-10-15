@@ -23,10 +23,12 @@ private:
     void ImgAct(int command);
 
 private slots:
+    void Draw();
     void OpenImage();
     void SaveCommand();
     void RemoveCommand();
     void SaveSequence();
+    void LoadSequence();
 };
 
 #endif // MAINWINDOW_H

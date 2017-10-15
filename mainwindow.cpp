@@ -23,13 +23,6 @@ MainWindow::MainWindow(QWidget *parent) :
     if (img.empty())
         return;
 
-    cv::Mat imgGray;
-    if (ui->cbGrayscale->isChecked())
-        cv::cvtColor(img, imgGray, CV_BGR2GRAY);
-    cv::Mat imgThresh;
-    if (ui->cbThresh->isChecked())
-        threshold( imgGray, imgThresh, 20, 150, CV_THRESH_BINARY );
-
     /*Canny( src_gray, canny_output, thresh, thresh*2, 3 );
       /// Find contours
     findContours( canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
@@ -55,26 +48,45 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 
 void MainWindow::ImgAct(int command){
-    seq->ImgAct(command);
+    float param[3];
+    param[0] = ui->lnParam1->text().toFloat();
+    param[1] = ui->lnParam2->text().toFloat();
+    param[2] = ui->lnParam2->text().toFloat();
+    cv::Mat imgOut;
+    seq->ImgAct(command, param, imgOut);
 }
 
 void MainWindow::Connects(){
-    connect(ui->btOpenImage, SIGNAL (clicked()), this, SLOT (OpenImage()));
-    connect(ui->btSaveCommand, SIGNAL (clicked()), this, SLOT (SaveCommand()));
-    connect(ui->btRemoveCommand, SIGNAL (clicked()), this, SLOT (RemoveCommand()));
-    connect(ui->btSaveSequence, SIGNAL (clicked()), this, SLOT (SaveSequence()));
+    connect(ui->btOpenImage,        SIGNAL (clicked()), this, SLOT (OpenImage()));
+    connect(ui->btSaveCommand,      SIGNAL (clicked()), this, SLOT (SaveCommand()));
+    connect(ui->btRemoveCommand,    SIGNAL (clicked()), this, SLOT (RemoveCommand()));
+    connect(ui->btSaveSequence,     SIGNAL (clicked()), this, SLOT (SaveSequence()));
+    connect(ui->btSaveSequence,     SIGNAL (clicked()), this, SLOT (LoadSequence()));
+    connect(ui->btDraw,             SIGNAL (clicked()), this, SLOT (Draw()));
+}
+
+void MainWindow::Draw(){
+    seq->Draw();
 }
 
 void MainWindow::SaveCommand(){
-    ui->lsMain->addItem(seq->SaveCommand());
+    SaveCmd cmd;
+    ui->lsMain->addItem(seq->SaveCommand(cmd));
 }
 
 void MainWindow::RemoveCommand(){
     seq->RemoveCommand();
+    //ui->lsMain->clear();
 }
 
 void MainWindow::SaveSequence(){
     seq->SaveSequence(ui->lnSequence->text());
+}
+
+void MainWindow::LoadSequence(){
+    QString imageName = QFileDialog::getOpenFileName(this,
+        tr("Open Image"),QDir::currentPath(),tr("Files (*.png *.jpg *.tiff *.bmp)"));
+    seq->LoadSequence(imageName);
 }
 
 void MainWindow::OpenImage(){

@@ -16,11 +16,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         mainwindow.cpp \
     settings.cpp \
-    rules.cpp
+    rules.cpp \
+    sequence.cpp \
+    stream.cpp \
+    handler.cpp
 
 HEADERS  += mainwindow.h \
     settings.h \
-    rules.h
+    rules.h \
+    sequence.h \
+    stream.h \
+    handler.h
 
 FORMS    += mainwindow.ui
 
