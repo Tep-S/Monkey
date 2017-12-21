@@ -9,6 +9,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <QToolTip>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -22,6 +23,12 @@ MainWindow::MainWindow(QWidget *parent) :
     cv::Mat img = cv::imread("gta.png", 1);
     if (img.empty())
         return;
+
+    ui->btLoadSequence->setToolTip("draw commands");
+    connect(ui->btLoadSequence, SIGNAL(clicked()), this, SLOT(ShowToolTip()));
+
+
+
 
     /*Canny( src_gray, canny_output, thresh, thresh*2, 3 );
       /// Find contours
@@ -45,6 +52,10 @@ MainWindow::MainWindow(QWidget *parent) :
     // show the image on window
   //  CvShowImage("My Image", pImg);
   Connects();
+}
+
+void MainWindow::ShowToolTip(){
+    QToolTip::showText(ui->btLoadSequence->mapToGlobal(QPoint()), "A tool tip");
 }
 
 void MainWindow::ImgAct(int command){

@@ -4,9 +4,9 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <QThread>
 
-class Handler: public Qthread
-{
+class Handler: public QThread{
 public:
     Handler();
     void run();

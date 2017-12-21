@@ -23,6 +23,7 @@ private:
     void ImgAct(int command);
 
 private slots:
+    void ShowToolTip();
     void Draw();
     void OpenImage();
     void SaveCommand();

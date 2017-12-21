@@ -30,11 +30,13 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui
 
-INCLUDEPATH += C:\code\opencv\build\include
+#INCLUDEPATH += C:\code\opencv\build\include
+INCLUDEPATH += C:\Users\serioussam\code\opencv\opencv\build\include
+MYPATH = C:\Users\serioussam\code\opencv\opencv-build\bin
 
-LIBS += C:\code\opencv-build\bin\libopencv_core330.dll
-LIBS += C:\code\opencv-build\bin\libopencv_highgui330.dll
-LIBS += C:\code\opencv-build\bin\libopencv_imgcodecs330.dll
-LIBS += C:\code\opencv-build\bin\libopencv_imgproc330.dll
-LIBS += C:\code\opencv-build\bin\libopencv_features2d330.dll
-LIBS += C:\code\opencv-build\bin\libopencv_calib3d330.dll
+LIBS += $${MYPATH}\libopencv_core330.dll
+LIBS += $${MYPATH}\libopencv_highgui330.dll
+LIBS += $${MYPATH}\libopencv_imgcodecs330.dll
+LIBS += $${MYPATH}\libopencv_imgproc330.dll
+LIBS += $${MYPATH}\libopencv_features2d330.dll
+LIBS += $${MYPATH}\libopencv_calib3d330.dll

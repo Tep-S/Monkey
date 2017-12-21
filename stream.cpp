@@ -11,18 +11,19 @@ cv::Mat Stream::GetCropped(cv::Rect rect){
 
 cv::Mat Stream::GetScreen(){
     //QPixmap window = QPixmap::grabWindow(QApplication::desktop()->grab());
-    QPixmap window = QApplication::desktop()->grab();
-    cv::Mat res(window.height(),window.width(),CV_8UC3,(uchar*)window.bits(),window.bytesPerLine());
-    cvtColor(res, res,CV_BGR2RGB);
-    return res;
+    //QPixmap window = QApplication::desktop()->grab();
+    //cv::Mat res(window.height(),window.width(),CV_8UC3,(uchar*)window.bits(),window.bytesPerLine());
+    //cvtColor(res, res,CV_BGR2RGB);
+    //return res;
+    return imgMain;
 }
 
-cv::Mat Stream::GetFrame(){
-    cv::VideoCapture cap(0);
+void Stream::GetFrame(){
+   /* cv::VideoCapture cap(0);
     if (!cap.isOpened())
-        return -1;
+        return;
     cap.read(imgMain);
-
+*/
 }
 
 void Stream::run(){
@@ -30,7 +31,7 @@ void Stream::run(){
         imgMain = GetScreen();
     }
     if (inputType == VIDEO_IN){
-        imgMain = GetFrame();
+        GetFrame();
     }
-    sleepms(step);
+    msleep(step);
 }

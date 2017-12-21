@@ -4,7 +4,8 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-#include "QPixmap"
+#include <QPixmap>
+#include <QThread>
 
 enum{
     NONE_IN,
@@ -13,6 +14,7 @@ enum{
 };
 
 class Stream: public QThread{
+    Q_OBJECT
 public:
     Stream();
     cv::Mat GetCropped(cv::Rect rect);
@@ -20,7 +22,7 @@ private:
     int step;
     void run();
     cv::Mat GetScreen();
-    cv::Mat GetFrame();
+    void GetFrame();
     int inputType;
     cv::Mat imgMain;
 };
