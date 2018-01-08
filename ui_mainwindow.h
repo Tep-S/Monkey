@@ -53,6 +53,7 @@ public:
     QPushButton *btTemplate;
     QCustomPlot *customPlot;
     QWidget *tab_2;
+    QCustomPlot *customPlot2;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -127,6 +128,9 @@ public:
         tbMain->addTab(tab, QString());
         tab_2 = new QWidget();
         tab_2->setObjectName(QStringLiteral("tab_2"));
+        customPlot2 = new QCustomPlot(tab_2);
+        customPlot2->setObjectName(QStringLiteral("customPlot2"));
+        customPlot2->setGeometry(QRect(30, 20, 591, 341));
         tbMain->addTab(tab_2, QString());
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
@@ -142,7 +146,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        tbMain->setCurrentIndex(0);
+        tbMain->setCurrentIndex(1);
 
 
         QMetaObject::connectSlotsByName(MainWindow);

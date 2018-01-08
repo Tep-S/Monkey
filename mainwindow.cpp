@@ -33,6 +33,33 @@ void MainWindow::Plots(){
     ui->customPlot->yAxis->setRange(0.0, 2000.0);
     QPen dotPen(Qt::red, 1, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin);
     ui->customPlot->graph(0)->setPen(dotPen);
+
+
+    //plot test
+
+    QCPCurve *fermatSpiral1 = new QCPCurve(ui->customPlot2->xAxis, ui->customPlot2->yAxis);
+    // generate the curve data points:
+    const int pointCount = 500;
+    QVector<QCPCurveData> dataSpiral1(pointCount);
+    QVector<double> vecI, vecY;
+    for (int i=0; i<pointCount; ++i)
+    {
+      double phi = i/(double)(pointCount-1)*8*M_PI;
+      double theta = i/(double)(pointCount-1)*2*M_PI;
+      vecI.append(qSqrt(phi)*qCos(phi));
+      vecY.append(qSqrt(phi)*qSin(phi));
+      //dataSpiral1[i] = QCPCurveData(i, qSqrt(phi)*qCos(phi), qSqrt(phi)*qSin(phi));
+    }
+    // pass the data to the curves; we know t (i in loop above) is ascending, so set alreadySorted=true (saves an extra internal sort):
+    //fermatSpiral1->data()->set(dataSpiral1, true);
+    fermatSpiral1->setData(vecI, vecY);
+    // color the curves:
+    fermatSpiral1->setPen(QPen(Qt::blue));
+    fermatSpiral1->setBrush(QBrush(QColor(0, 0, 255, 20)));
+    // set some basic customPlot config:
+    ui->customPlot2->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    ui->customPlot2->axisRect()->setupFullAxesBox();
+    ui->customPlot2->rescaleAxes();
 }
 
 void MainWindow::Tests(){
