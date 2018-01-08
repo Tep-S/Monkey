@@ -14,21 +14,30 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    seq(new Sequence())
+    seq(new Sequence()),
+    stream(new Stream()),
+    handler(new Handler(stream, ui))
 {
     ui->setupUi(this);
+    Tests();
+    stream->start();
+    handler->start();
+    Connects();
+    Plots();
 
+}
+
+void MainWindow::Plots(){
+    ui->customPlot->addGraph();
+    ui->customPlot->xAxis->setRange(0.0, 2000.0);
+    ui->customPlot->yAxis->setRange(0.0, 2000.0);
+    QPen dotPen(Qt::red, 1, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin);
+    ui->customPlot->graph(0)->setPen(dotPen);
+}
+
+void MainWindow::Tests(){
     QPoint pnt = QCursor::pos();
     qInfo("x %d y %d",pnt.x(), pnt.y());
-    cv::Mat img = cv::imread("gta.png", 1);
-    if (img.empty())
-        return;
-
-    ui->btLoadSequence->setToolTip("draw commands");
-    connect(ui->btLoadSequence, SIGNAL(clicked()), this, SLOT(ShowToolTip()));
-
-
-
 
     /*Canny( src_gray, canny_output, thresh, thresh*2, 3 );
       /// Find contours
@@ -39,19 +48,6 @@ MainWindow::MainWindow(QWidget *parent) :
         Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
          drawContours( drawing, contours, i, color, 2, 8, hierarchy, 0, Point() );
     }*/
-
-    //cv::namedWindow("My Image");
-        // show the image on window
-   // cv::imshow("My Image", imgThresh);
-//cv::String imageName("C:/code/Monkey-master/Monkey-master/pen.png");
-    // read an image
-  // IplImage* pImg =  cvLoadImage("pen.png", 1);
-
-    // create image window named "My Image"
-//    cv::namedWindow("My Image");
-    // show the image on window
-  //  CvShowImage("My Image", pImg);
-  Connects();
 }
 
 void MainWindow::ShowToolTip(){
@@ -74,6 +70,14 @@ void MainWindow::Connects(){
     connect(ui->btSaveSequence,     SIGNAL (clicked()), this, SLOT (SaveSequence()));
     connect(ui->btSaveSequence,     SIGNAL (clicked()), this, SLOT (LoadSequence()));
     connect(ui->btDraw,             SIGNAL (clicked()), this, SLOT (Draw()));
+    ui->btLoadSequence->setToolTip("draw commands");
+    connect(ui->btLoadSequence,     SIGNAL (clicked()), this, SLOT(ShowToolTip()));
+    connect(ui->btTemplate,         SIGNAL (clicked()), this, SLOT(TestTemplate()));
+}
+
+void MainWindow::TestTemplate(){
+    seq->TemplateTest();
+
 }
 
 void MainWindow::Draw(){

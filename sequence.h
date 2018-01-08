@@ -35,6 +35,8 @@ public:
     void LoadSequence(QString filename);
     void ImgAct(int command, float *par, cv::Mat &outImg);
     void Draw();
+    void TemplateTest();
+    cv::Point TemplateCoord(cv::Mat input, cv::Mat templateIn);
 private:
     cv::Mat img;
     cv::Mat imgClean;

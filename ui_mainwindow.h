@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created by: Qt User Interface Compiler version 5.9.2
+** Created by: Qt User Interface Compiler version 5.10.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -26,6 +26,7 @@
 #include <QtWidgets/QTabWidget>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
+#include "qcustomplot.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -49,6 +50,8 @@ public:
     QLineEdit *lnParam1;
     QLineEdit *lnParam2;
     QLineEdit *lnParam3;
+    QPushButton *btTemplate;
+    QCustomPlot *customPlot;
     QWidget *tab_2;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
@@ -77,28 +80,35 @@ public:
         cbGrayscale->setGeometry(QRect(340, 40, 70, 17));
         btSaveCommand = new QPushButton(tab);
         btSaveCommand->setObjectName(QStringLiteral("btSaveCommand"));
-        btSaveCommand->setGeometry(QRect(410, 230, 81, 23));
+        btSaveCommand->setGeometry(QRect(470, 240, 41, 23));
         btSaveSequence = new QPushButton(tab);
         btSaveSequence->setObjectName(QStringLiteral("btSaveSequence"));
-        btSaveSequence->setGeometry(QRect(470, 270, 151, 23));
+        btSaveSequence->setGeometry(QRect(470, 270, 91, 23));
         btRemoveCommand = new QPushButton(tab);
         btRemoveCommand->setObjectName(QStringLiteral("btRemoveCommand"));
-        btRemoveCommand->setGeometry(QRect(500, 230, 91, 23));
+        btRemoveCommand->setGeometry(QRect(510, 240, 51, 23));
         lsMain = new QListWidget(tab);
         lsMain->setObjectName(QStringLiteral("lsMain"));
         lsMain->setGeometry(QRect(30, 270, 431, 151));
         lnSequence = new QLineEdit(tab);
         lnSequence->setObjectName(QStringLiteral("lnSequence"));
-        lnSequence->setGeometry(QRect(620, 270, 113, 20));
+        lnSequence->setGeometry(QRect(560, 270, 61, 20));
         btLoadSequence = new QPushButton(tab);
         btLoadSequence->setObjectName(QStringLiteral("btLoadSequence"));
-        btLoadSequence->setGeometry(QRect(470, 290, 151, 23));
+        btLoadSequence->setGeometry(QRect(470, 290, 91, 23));
         comboBox = new QComboBox(tab);
+        comboBox->addItem(QString());
+        comboBox->addItem(QString());
+        comboBox->addItem(QString());
+        comboBox->addItem(QString());
+        comboBox->addItem(QString());
+        comboBox->addItem(QString());
+        comboBox->addItem(QString());
         comboBox->setObjectName(QStringLiteral("comboBox"));
         comboBox->setGeometry(QRect(30, 230, 101, 22));
         btDraw = new QPushButton(tab);
         btDraw->setObjectName(QStringLiteral("btDraw"));
-        btDraw->setGeometry(QRect(600, 230, 91, 23));
+        btDraw->setGeometry(QRect(570, 240, 41, 23));
         lnParam1 = new QLineEdit(tab);
         lnParam1->setObjectName(QStringLiteral("lnParam1"));
         lnParam1->setGeometry(QRect(140, 230, 61, 20));
@@ -108,6 +118,12 @@ public:
         lnParam3 = new QLineEdit(tab);
         lnParam3->setObjectName(QStringLiteral("lnParam3"));
         lnParam3->setGeometry(QRect(280, 230, 61, 20));
+        btTemplate = new QPushButton(tab);
+        btTemplate->setObjectName(QStringLiteral("btTemplate"));
+        btTemplate->setGeometry(QRect(470, 310, 91, 23));
+        customPlot = new QCustomPlot(tab);
+        customPlot->setObjectName(QStringLiteral("customPlot"));
+        customPlot->setGeometry(QRect(480, 340, 591, 341));
         tbMain->addTab(tab, QString());
         tab_2 = new QWidget();
         tab_2->setObjectName(QStringLiteral("tab_2"));
@@ -134,31 +150,30 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", Q_NULLPTR));
-        btOpenImage->setText(QApplication::translate("MainWindow", "Open Image", Q_NULLPTR));
-        lbImage->setText(QApplication::translate("MainWindow", "Image Name", Q_NULLPTR));
-        cbGrayscale->setText(QApplication::translate("MainWindow", "Grayscale", Q_NULLPTR));
-        btSaveCommand->setText(QApplication::translate("MainWindow", "Add", Q_NULLPTR));
-        btSaveSequence->setText(QApplication::translate("MainWindow", "Save Sequence", Q_NULLPTR));
-        btRemoveCommand->setText(QApplication::translate("MainWindow", "Remove", Q_NULLPTR));
-        lnSequence->setText(QApplication::translate("MainWindow", "seq.conf", Q_NULLPTR));
-        btLoadSequence->setText(QApplication::translate("MainWindow", "Load Sequence", Q_NULLPTR));
-        comboBox->clear();
-        comboBox->insertItems(0, QStringList()
-         << QApplication::translate("MainWindow", "Grayscale", Q_NULLPTR)
-         << QApplication::translate("MainWindow", "Threshing", Q_NULLPTR)
-         << QApplication::translate("MainWindow", "Canny", Q_NULLPTR)
-         << QApplication::translate("MainWindow", "Contour", Q_NULLPTR)
-         << QApplication::translate("MainWindow", "Bgr2Hsv", Q_NULLPTR)
-         << QApplication::translate("MainWindow", "Blur", Q_NULLPTR)
-         << QApplication::translate("MainWindow", "Hsv2Bgr", Q_NULLPTR)
-        );
-        btDraw->setText(QApplication::translate("MainWindow", "Draw", Q_NULLPTR));
-        lnParam1->setText(QApplication::translate("MainWindow", "1", Q_NULLPTR));
-        lnParam2->setText(QApplication::translate("MainWindow", "2", Q_NULLPTR));
-        lnParam3->setText(QApplication::translate("MainWindow", "3", Q_NULLPTR));
-        tbMain->setTabText(tbMain->indexOf(tab), QApplication::translate("MainWindow", "Tab 1", Q_NULLPTR));
-        tbMain->setTabText(tbMain->indexOf(tab_2), QApplication::translate("MainWindow", "Tab 2", Q_NULLPTR));
+        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", nullptr));
+        btOpenImage->setText(QApplication::translate("MainWindow", "Open Image", nullptr));
+        lbImage->setText(QApplication::translate("MainWindow", "Image Name", nullptr));
+        cbGrayscale->setText(QApplication::translate("MainWindow", "Grayscale", nullptr));
+        btSaveCommand->setText(QApplication::translate("MainWindow", "Add", nullptr));
+        btSaveSequence->setText(QApplication::translate("MainWindow", "Save Sequence", nullptr));
+        btRemoveCommand->setText(QApplication::translate("MainWindow", "Remove", nullptr));
+        lnSequence->setText(QApplication::translate("MainWindow", "seq.conf", nullptr));
+        btLoadSequence->setText(QApplication::translate("MainWindow", "Load Sequence", nullptr));
+        comboBox->setItemText(0, QApplication::translate("MainWindow", "Grayscale", nullptr));
+        comboBox->setItemText(1, QApplication::translate("MainWindow", "Threshing", nullptr));
+        comboBox->setItemText(2, QApplication::translate("MainWindow", "Canny", nullptr));
+        comboBox->setItemText(3, QApplication::translate("MainWindow", "Contour", nullptr));
+        comboBox->setItemText(4, QApplication::translate("MainWindow", "Bgr2Hsv", nullptr));
+        comboBox->setItemText(5, QApplication::translate("MainWindow", "Blur", nullptr));
+        comboBox->setItemText(6, QApplication::translate("MainWindow", "Hsv2Bgr", nullptr));
+
+        btDraw->setText(QApplication::translate("MainWindow", "Draw", nullptr));
+        lnParam1->setText(QApplication::translate("MainWindow", "1", nullptr));
+        lnParam2->setText(QApplication::translate("MainWindow", "2", nullptr));
+        lnParam3->setText(QApplication::translate("MainWindow", "3", nullptr));
+        btTemplate->setText(QApplication::translate("MainWindow", "Template", nullptr));
+        tbMain->setTabText(tbMain->indexOf(tab), QApplication::translate("MainWindow", "Tab 1", nullptr));
+        tbMain->setTabText(tbMain->indexOf(tab_2), QApplication::translate("MainWindow", "Tab 2", nullptr));
     } // retranslateUi
 
 };

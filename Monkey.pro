@@ -6,7 +6,7 @@
 
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 TARGET = Monkey
 TEMPLATE = app
@@ -19,24 +19,33 @@ SOURCES += main.cpp\
     rules.cpp \
     sequence.cpp \
     stream.cpp \
-    handler.cpp
+    handler.cpp \
+    qcustomplot.cpp
 
 HEADERS  += mainwindow.h \
     settings.h \
     rules.h \
     sequence.h \
     stream.h \
-    handler.h
+    handler.h \
+    qcustomplot.h
 
 FORMS    += mainwindow.ui
 
 #INCLUDEPATH += C:\code\opencv\build\include
-INCLUDEPATH += C:\Users\serioussam\code\opencv\opencv\build\include
-MYPATH = C:\Users\serioussam\code\opencv\opencv-build\bin
+INCLUDEPATH += C:\Users\Sam\Desktop\code\opencv\build\include
+MYPATH = C:\Users\Sam\Desktop\code\opencv-build\bin
 
-LIBS += $${MYPATH}\libopencv_core330.dll
-LIBS += $${MYPATH}\libopencv_highgui330.dll
-LIBS += $${MYPATH}\libopencv_imgcodecs330.dll
-LIBS += $${MYPATH}\libopencv_imgproc330.dll
-LIBS += $${MYPATH}\libopencv_features2d330.dll
-LIBS += $${MYPATH}\libopencv_calib3d330.dll
+#LIBS += $${MYPATH}\libopencv_core330.dll
+#LIBS += $${MYPATH}\libopencv_highgui330.dll
+#LIBS += $${MYPATH}\libopencv_imgcodecs330.dll
+#LIBS += $${MYPATH}\libopencv_imgproc330.dll
+#LIBS += $${MYPATH}\libopencv_features2d330.dll
+#LIBS += $${MYPATH}\libopencv_calib3d330.dll
+
+LIBS += $${MYPATH}\libopencv_core331.dll
+LIBS += $${MYPATH}\libopencv_highgui331.dll
+LIBS += $${MYPATH}\libopencv_imgcodecs331.dll
+LIBS += $${MYPATH}\libopencv_imgproc331.dll
+LIBS += $${MYPATH}\libopencv_features2d331.dll
+LIBS += $${MYPATH}\libopencv_calib3d331.dll

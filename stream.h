@@ -18,13 +18,13 @@ class Stream: public QThread{
 public:
     Stream();
     cv::Mat GetCropped(cv::Rect rect);
+    cv::Mat imgMain;
 private:
     int step;
     void run();
     cv::Mat GetScreen();
     void GetFrame();
     int inputType;
-    cv::Mat imgMain;
 };
 
 #endif // STREAM_H

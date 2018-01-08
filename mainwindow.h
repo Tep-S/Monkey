@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include "sequence.h"
+#include "stream.h"
+#include "handler.h"
 
 namespace Ui {
 class MainWindow;
@@ -21,8 +23,12 @@ private:
     Ui::MainWindow *ui;
     void Connects();
     void ImgAct(int command);
-
+    Stream* stream;
+    Handler* handler;
+    void Tests();
+    void Plots();
 private slots:
+    void TestTemplate();
     void ShowToolTip();
     void Draw();
     void OpenImage();
