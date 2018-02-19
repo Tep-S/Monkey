@@ -20,7 +20,10 @@ SOURCES += main.cpp\
     sequence.cpp \
     stream.cpp \
     handler.cpp \
-    qcustomplot.cpp
+    qcustomplot.cpp \
+    mouse/BezierCurve.cpp \
+    mouse/Normal.cpp \
+    mouse/RunMouse.cpp
 
 HEADERS  += mainwindow.h \
     settings.h \
@@ -28,7 +31,11 @@ HEADERS  += mainwindow.h \
     sequence.h \
     stream.h \
     handler.h \
-    qcustomplot.h
+    qcustomplot.h \
+    ui_mainwindow.h \
+    mouse/BezierCurve.h \
+    mouse/Normal.h \
+    mouse/RunMouse.h
 
 FORMS    += mainwindow.ui
 

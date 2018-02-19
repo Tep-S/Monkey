@@ -269,6 +269,16 @@
      <attribute name="title">
       <string>Tab 2</string>
      </attribute>
+     <widget class="QCustomPlot" name="customPlot2" native="true">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>20</y>
+        <width>591</width>
+        <height>341</height>
+       </rect>
+      </property>
+     </widget>
     </widget>
    </widget>
   </widget>
