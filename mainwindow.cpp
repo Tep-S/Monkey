@@ -11,6 +11,13 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <QToolTip>
 
+#include <iostream>
+extern "C" {
+# include "lua/lua/include/lua.h"
+# include "lua/lua/include/lauxlib.h"
+# include "lua/lua/include/lualib.h"
+}
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
@@ -18,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
     stream(new Stream()),
     handler(new Handler(stream, ui))
 {
+  //  LuaTest();
     ui->setupUi(this);
     Tests();
     stream->start();

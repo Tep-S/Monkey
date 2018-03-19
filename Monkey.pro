@@ -35,7 +35,12 @@ HEADERS  += mainwindow.h \
     ui_mainwindow.h \
     mouse/BezierCurve.h \
     mouse/Normal.h \
-    mouse/RunMouse.h
+    mouse/RunMouse.h \
+    lua/lua/include/lauxlib.h \
+    lua/lua/include/lua.h \
+    lua/lua/include/lua.hpp \
+    lua/lua/include/luaconf.h \
+    lua/lua/include/lualib.h \
 
 FORMS    += mainwindow.ui
 
@@ -56,3 +61,13 @@ LIBS += $${MYPATH}\libopencv_imgcodecs331.dll
 LIBS += $${MYPATH}\libopencv_imgproc331.dll
 LIBS += $${MYPATH}\libopencv_features2d331.dll
 LIBS += $${MYPATH}\libopencv_calib3d331.dll
+
+#LIBS += \
+#    lua/lua/liblua53.a \
+#    lua/lua/lua53.dll
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/lua/lua/ -llua53
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/lua/lua/ -llua53d
+
+INCLUDEPATH += $$PWD/lua/lua/include
+DEPENDPATH += $$PWD/lua/lua/include
