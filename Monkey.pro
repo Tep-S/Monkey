@@ -23,7 +23,7 @@ SOURCES += main.cpp\
     qcustomplot.cpp \
     mouse/BezierCurve.cpp \
     mouse/Normal.cpp \
-    mouse/RunMouse.cpp
+    mouse/RunMouse.cpp \
 
 HEADERS  += mainwindow.h \
     settings.h \
@@ -41,7 +41,28 @@ HEADERS  += mainwindow.h \
     lua/lua/include/lua.hpp \
     lua/lua/include/luaconf.h \
     lua/lua/include/lualib.h \
-
+    lua/lua/include/lauxlib.h \
+    lua/lua/include/lua.h \
+    lua/lua/include/lua.hpp \
+    lua/lua/include/luaconf.h \
+    lua/lua/include/lualib.h \
+    lua/luabridge/detail/CFunctions.h \
+    lua/luabridge/detail/ClassInfo.h \
+    lua/luabridge/detail/Constructor.h \
+    lua/luabridge/detail/dump.h \
+    lua/luabridge/detail/FuncTraits.h \
+    lua/luabridge/detail/Iterator.h \
+    lua/luabridge/detail/LuaException.h \
+    lua/luabridge/detail/LuaHelpers.h \
+    lua/luabridge/detail/LuaRef.h \
+    lua/luabridge/detail/Namespace.h \
+    lua/luabridge/detail/Stack.h \
+    lua/luabridge/detail/TypeList.h \
+    lua/luabridge/detail/TypeTraits.h \
+    lua/luabridge/detail/Userdata.h \
+    lua/luabridge/LuaBridge.h \
+    lua/luabridge/RefCountedObject.h \
+    lua/luabridge/RefCountedPtr.h
 FORMS    += mainwindow.ui
 
 #INCLUDEPATH += C:\code\opencv\build\include
@@ -62,12 +83,10 @@ LIBS += $${MYPATH}\libopencv_imgproc331.dll
 LIBS += $${MYPATH}\libopencv_features2d331.dll
 LIBS += $${MYPATH}\libopencv_calib3d331.dll
 
-#LIBS += \
-#    lua/lua/liblua53.a \
-#    lua/lua/lua53.dll
+INCLUDEPATH += $$PWD/lua/lua/include
+DEPENDPATH += $$PWD/lua/lua/include
+
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/lua/lua/ -llua53
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/lua/lua/ -llua53d
 
-INCLUDEPATH += $$PWD/lua/lua/include
-DEPENDPATH += $$PWD/lua/lua/include

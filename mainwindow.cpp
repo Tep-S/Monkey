@@ -11,11 +11,28 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <QToolTip>
 
+// main.cpp
+#include <lua/luabridge/LuaBridge.h>
 #include <iostream>
 extern "C" {
-# include "lua/lua/include/lua.h"
-# include "lua/lua/include/lauxlib.h"
-# include "lua/lua/include/lualib.h"
+# include "lua.h"
+# include "lauxlib.h"
+# include "lualib.h"
+}
+
+
+void LuaTest() {
+    using namespace luabridge;
+    lua_State* L = luaL_newstate();
+    luaL_dofile(L, "script.lua");
+    luaL_openlibs(L);
+    lua_pcall(L, 0, 0, 0);
+    LuaRef s = getGlobal(L, "testString");
+    LuaRef n = getGlobal(L, "number");
+    std::string luaString = s.cast<std::string>();
+    int answer = n.cast<int>();
+    std::cout << luaString << std::endl;
+    std::cout << "And here's our number:" << answer << std::endl;
 }
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -25,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
     stream(new Stream()),
     handler(new Handler(stream, ui))
 {
-  //  LuaTest();
+    LuaTest();
     ui->setupUi(this);
     Tests();
     stream->start();

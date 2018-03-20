@@ -36,36 +36,37 @@ QString type2str(int type) {
 void Handler::run(){
     using namespace cv;
     msleep(2000);
+    int cntFrame = 0;
 while(1){
-    qInfo("handler");
-    Rect rect(0, 0, 1080, 1080);
+   // Rect rect(0, 0, 1080, 1080);
     //stream->GetCropped(rect);
     //Mat window = stream->GetCropped(rect);
     Mat window;
     cv::cvtColor(stream->imgMain, window, CV_BGRA2BGR);
-    //Mat templ = imread( "duck.png", 1 );
+    Mat templ = imread( "duck.png", 1 );
     //Mat window = imread( "img1.jpg", 1 );
-    Mat templ = imread( "img2.jpg", 1 );
-
-   // QString str = type2str(templ.type());
-    //qInfo("templ %s", str.toStdString().c_str());
-    //QString str2 = type2str(window.type());
-    //qInfo("window %s", str2.toStdString().c_str());
-
-    //qInfo("rows %d cols %d", window.rows, window.cols);
 
     Point point = seq->TemplateCoord(window,templ);
+    point.x += templ.cols/2;
+    point.y += templ.rows/2;
     qInfo("point x %d y %d ", point.x, point.y);
-
-    xPlot.append(point.x);
-    yPlot.append(point.y);
-    ui->customPlot->graph(0)->setData(xPlot , yPlot);
-    //curve->setData(xPlot , yPlot);
+    //xPlot.append(point.x);
+    //yPlot.append(point.y);
+    //ui->customPlot->graph(0)->setData(xPlot , yPlot);
     ui->customPlot->replot();
+    //curve->setData(xPlot , yPlot);
+    cv::circle(window, point, 50, Qt::green);
+    char nameBuff[128];
+    sprintf(nameBuff,"log/%d.jpg",cntFrame++);
+    qInfo("%s",nameBuff);
+    imwrite( nameBuff, window );
+    //namedWindow( "Display window", WINDOW_AUTOSIZE );// Create a window for display.
+    //imshow( "Display window", window);                   // Show our image inside it.
+    //waitKey(0);
    // Click(point.x, point.y);
     Result();
 
-    msleep(500);
+    msleep(300);
 }
 }
 
