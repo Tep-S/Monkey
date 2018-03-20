@@ -24,6 +24,7 @@ SOURCES += main.cpp\
     mouse/BezierCurve.cpp \
     mouse/Normal.cpp \
     mouse/RunMouse.cpp \
+    lua/luapusher.cpp
 
 HEADERS  += mainwindow.h \
     settings.h \
@@ -62,7 +63,8 @@ HEADERS  += mainwindow.h \
     lua/luabridge/detail/Userdata.h \
     lua/luabridge/LuaBridge.h \
     lua/luabridge/RefCountedObject.h \
-    lua/luabridge/RefCountedPtr.h
+    lua/luabridge/RefCountedPtr.h \
+    lua/luapusher.h
 FORMS    += mainwindow.ui
 
 #INCLUDEPATH += C:\code\opencv\build\include

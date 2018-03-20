@@ -99,8 +99,8 @@ void Sequence::TemplateTest(){
     Mat result;
     int match_method = 5;
 
-    char* image_window = "Source Image";
-    char* result_window = "Result window";
+    char image_window [] = "Source Image";
+    char result_window [] = "Result window";
     namedWindow( image_window, CV_WINDOW_AUTOSIZE );
     namedWindow( result_window, CV_WINDOW_AUTOSIZE );
 

@@ -24,6 +24,7 @@ struct Goal{
 void Settings::Load(){
     QSettings settings( "coord.conf", QSettings::IniFormat );
     settings.beginGroup( "WINDOW_COORD" );
+#if 0
     int x1 = settings.value( "x",           -1 ).toInt();
     int y1 = settings.value( "y",           -1 ).toInt();
     int xSize1 = settings.value( "xSize",   -1 ).toInt();
@@ -40,7 +41,7 @@ void Settings::Load(){
     float recharge = settings.value( "recharge",        -1 ).toFloat();
     float aimReady = settings.value( "aimReady",        -1 ).toFloat();
     float changeGoal = settings.value( "changeGoal",    -1 ).toFloat();
-
+#endif
     //settings.beginGroup( "PATTERN_IMAGES" );
     //color and images
 

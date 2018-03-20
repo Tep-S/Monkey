@@ -10,30 +10,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <QToolTip>
-
-// main.cpp
-#include <lua/luabridge/LuaBridge.h>
-#include <iostream>
-extern "C" {
-# include "lua.h"
-# include "lauxlib.h"
-# include "lualib.h"
-}
-
-
-void LuaTest() {
-    using namespace luabridge;
-    lua_State* L = luaL_newstate();
-    luaL_dofile(L, "script.lua");
-    luaL_openlibs(L);
-    lua_pcall(L, 0, 0, 0);
-    LuaRef s = getGlobal(L, "testString");
-    LuaRef n = getGlobal(L, "number");
-    std::string luaString = s.cast<std::string>();
-    int answer = n.cast<int>();
-    std::cout << luaString << std::endl;
-    std::cout << "And here's our number:" << answer << std::endl;
-}
+#include "lua/luapusher.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -42,11 +19,11 @@ MainWindow::MainWindow(QWidget *parent) :
     stream(new Stream()),
     handler(new Handler(stream, ui))
 {
-    LuaTest();
+    LuaPusher pusher;
     ui->setupUi(this);
-    Tests();
-    stream->start();
-    handler->start();
+    //Tests();
+    //stream->start();
+   // handler->start();
     Connects();
     Plots();
 
@@ -70,7 +47,7 @@ void MainWindow::Plots(){
     for (int i=0; i<pointCount; ++i)
     {
       double phi = i/(double)(pointCount-1)*8*M_PI;
-      double theta = i/(double)(pointCount-1)*2*M_PI;
+      //double theta = i/(double)(pointCount-1)*2*M_PI;
       vecI.append(qSqrt(phi)*qCos(phi));
       vecY.append(qSqrt(phi)*qSin(phi));
       //dataSpiral1[i] = QCPCurveData(i, qSqrt(phi)*qCos(phi), qSqrt(phi)*qSin(phi));

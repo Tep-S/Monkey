@@ -59,7 +59,9 @@ while(1){
     char nameBuff[128];
     sprintf(nameBuff,"log/%d.jpg",cntFrame++);
     qInfo("%s",nameBuff);
-    imwrite( nameBuff, window );
+
+    //imwrite( nameBuff, window );
+
     //namedWindow( "Display window", WINDOW_AUTOSIZE );// Create a window for display.
     //imshow( "Display window", window);                   // Show our image inside it.
     //waitKey(0);
