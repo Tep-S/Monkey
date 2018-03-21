@@ -8,7 +8,7 @@ LuaPusher::LuaPusher()
     L = luaL_newstate();
 
     //LuaTest();
-    ClassTest();
+    //ClassTest();
 }
 
 void LuaPusher::LuaTest() {

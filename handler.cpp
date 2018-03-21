@@ -46,7 +46,9 @@ while(1){
     Mat templ = imread( "duck.png", 1 );
     //Mat window = imread( "img1.jpg", 1 );
 
-    Point point = seq->TemplateCoord(window,templ);
+    Point point = seq->TemplateCoord(window,templ, 0.7);
+    if ( (point.x == 0) && (point.y == 0) )
+        continue;
     point.x += templ.cols/2;
     point.y += templ.rows/2;
     qInfo("point x %d y %d ", point.x, point.y);

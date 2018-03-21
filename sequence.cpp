@@ -1,5 +1,5 @@
 #include "sequence.h"
-
+//#include "opencv2/opencv_modules.hpp"
 Sequence::Sequence(){
     cmdCnt = 0;
 }
@@ -55,7 +55,71 @@ void Sequence::ImgAct(int command, float* par, cv::Mat& outImg){
 
 }
 
-cv::Point Sequence::TemplateCoord(cv::Mat input, cv::Mat templateIn){
+int Sequence::FlannMatching(cv::Mat input, cv::Mat templateIn)
+{
+    using namespace cv;
+    using namespace cv::xfeatures2d;
+    Mat img_1   = input;//IMREAD_GRAYSCALE
+    Mat img_2 = templateIn;//IMREAD_GRAYSCALE
+
+
+  /*if( argc != 3 )
+  { readme(); return -1; }
+  Mat img_1 = imread( argv[1], IMREAD_GRAYSCALE );
+  Mat img_2 = imread( argv[2], IMREAD_GRAYSCALE );
+  */
+
+  if( !img_1.data || !img_2.data ){
+      qInfo("read error");
+    return -1;
+   }
+
+  //-- Step 1: Detect the keypoints using SURF Detector, compute the descriptors
+  int minHessian = 400;
+  Ptr<SURF> detector = SURF::create();
+  detector->setHessianThreshold(minHessian);
+  std::vector<KeyPoint> keypoints_1, keypoints_2;
+  Mat descriptors_1, descriptors_2;
+  detector->detectAndCompute( img_1, Mat(), keypoints_1, descriptors_1 );
+  detector->detectAndCompute( img_2, Mat(), keypoints_2, descriptors_2 );
+  //-- Step 2: Matching descriptor vectors using FLANN matcher
+  FlannBasedMatcher matcher;
+  std::vector< DMatch > matches;
+  matcher.match( descriptors_1, descriptors_2, matches );
+  double max_dist = 0; double min_dist = 100;
+  //-- Quick calculation of max and min distances between keypoints
+  for( int i = 0; i < descriptors_1.rows; i++ ){
+    double dist = matches[i].distance;
+    if( dist < min_dist ) min_dist = dist;
+    if( dist > max_dist ) max_dist = dist;
+  }
+  printf("-- Max dist : %f \n", max_dist );
+  printf("-- Min dist : %f \n", min_dist );
+  //-- Draw only "good" matches (i.e. whose distance is less than 2*min_dist,
+  //-- or a small arbitary value ( 0.02 ) in the event that min_dist is very
+  //-- small)
+  //-- PS.- radiusMatch can also be used here.
+  std::vector< DMatch > good_matches;
+  for( int i = 0; i < descriptors_1.rows; i++ )
+    if( matches[i].distance <= max(2*min_dist, 0.02) )
+        good_matches.push_back( matches[i]);
+
+/*
+  //-- Draw only "good" matches
+  Mat img_matches;
+  drawMatches( img_1, keypoints_1, img_2, keypoints_2,
+               good_matches, img_matches, Scalar::all(-1), Scalar::all(-1),
+               vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS );
+  //-- Show detected matches
+  imshow( "Good Matches", img_matches );
+  for( int i = 0; i < (int)good_matches.size(); i++ )
+  { printf( "-- Good Match [%d] Keypoint 1: %d  -- Keypoint 2: %d  \n", i, good_matches[i].queryIdx, good_matches[i].trainIdx ); }
+  waitKey(0);
+  return 0;
+  */
+}
+
+cv::Point Sequence::TemplateCoord(cv::Mat input, cv::Mat templateIn, double thresh){
     using namespace std;
     using namespace cv;
     Mat result;
@@ -72,72 +136,29 @@ cv::Point Sequence::TemplateCoord(cv::Mat input, cv::Mat templateIn){
 
     /// Do the Matching and Normalize
     matchTemplate( img, templ, result, match_method );
-    normalize( result, result, 0, 1, NORM_MINMAX, -1, Mat() );
-
+    //normalize( result, result, 0, 1, NORM_MINMAX, -1, Mat() );//need just for imshow!!!
     /// Localizing the best match with minMaxLoc
-    double minVal; double maxVal; Point minLoc; Point maxLoc;
-    Point matchLoc;
+    double minVal, maxVal;
+    Point minLoc, maxLoc;
+    Point matchLoc(0,0);
 
     minMaxLoc( result, &minVal, &maxVal, &minLoc, &maxLoc, Mat() );
+    if (maxVal < thresh){
+        //matchLoc.x = matchLoc.y = 0;
+        return matchLoc;
+    }
+
+    qInfo("min %.2f max %.2f", minVal, maxVal);
 
     /// For SQDIFF and SQDIFF_NORMED, the best matches are lower values. For all the other methods, the higher the better
     if( match_method  == CV_TM_SQDIFF || match_method == CV_TM_SQDIFF_NORMED )
-      { matchLoc = minLoc; }
+        matchLoc = minLoc;
     else
-      { matchLoc = maxLoc; }
-    /**/
-    //Point matchLoc;
+        matchLoc = maxLoc;
+
     return matchLoc;
 
-    /// Show me what you got
     //rectangle( img_display, matchLoc, Point( matchLoc.x + templ.cols , matchLoc.y + templ.rows ), Scalar::all(0), 2, 8, 0 );
-}
-
-void Sequence::TemplateTest(){
-    using namespace std;
-    using namespace cv;
-    Mat result;
-    int match_method = 5;
-
-    char image_window [] = "Source Image";
-    char result_window [] = "Result window";
-    namedWindow( image_window, CV_WINDOW_AUTOSIZE );
-    namedWindow( result_window, CV_WINDOW_AUTOSIZE );
-
-    Mat img   = imread( "img1.jpg", 1 );
-    Mat templ = imread( "img2.jpg", 1 );
-
-    Mat img_display;
-    img.copyTo( img_display );
-
-    /// Create the result matrix
-    int result_cols =  img.cols - templ.cols + 1;
-    int result_rows = img.rows - templ.rows + 1;
-
-    result.create( result_rows, result_cols, CV_32FC1 );
-
-    /// Do the Matching and Normalize
-    matchTemplate( img, templ, result, match_method );
-    normalize( result, result, 0, 1, NORM_MINMAX, -1, Mat() );
-
-    /// Localizing the best match with minMaxLoc
-    double minVal; double maxVal; Point minLoc; Point maxLoc;
-    Point matchLoc;
-
-    minMaxLoc( result, &minVal, &maxVal, &minLoc, &maxLoc, Mat() );
-
-    /// For SQDIFF and SQDIFF_NORMED, the best matches are lower values. For all the other methods, the higher the better
-    if( match_method  == CV_TM_SQDIFF || match_method == CV_TM_SQDIFF_NORMED )
-      { matchLoc = minLoc; }
-    else
-      { matchLoc = maxLoc; }
-
-    /// Show me what you got
-    rectangle( img_display, matchLoc, Point( matchLoc.x + templ.cols , matchLoc.y + templ.rows ), Scalar::all(0), 2, 8, 0 );
-    rectangle( result, matchLoc, Point( matchLoc.x + templ.cols , matchLoc.y + templ.rows ), Scalar::all(0), 2, 8, 0 );
-
-    imshow( image_window, img_display );
-    imshow( result_window, result );
 }
 
 void Sequence::OpenImage(QString imageName){

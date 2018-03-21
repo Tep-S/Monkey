@@ -69,21 +69,17 @@ FORMS    += mainwindow.ui
 
 #INCLUDEPATH += C:\code\opencv\build\include
 INCLUDEPATH += C:\Users\Sam\Desktop\code\opencv\build\include
+INCLUDEPATH += C:\Users\Sam\Desktop\code\opencv\opencv_contrib331\modules\xfeatures2d\include
 MYPATH = C:\Users\Sam\Desktop\code\opencv-build\bin
 
-#LIBS += $${MYPATH}\libopencv_core330.dll
-#LIBS += $${MYPATH}\libopencv_highgui330.dll
-#LIBS += $${MYPATH}\libopencv_imgcodecs330.dll
-#LIBS += $${MYPATH}\libopencv_imgproc330.dll
-#LIBS += $${MYPATH}\libopencv_features2d330.dll
-#LIBS += $${MYPATH}\libopencv_calib3d330.dll
-
-LIBS += $${MYPATH}\libopencv_core331.dll
+LIBS += $${MYPATH}\libopencv_flann331.dll
+LIBS += $${MYPATH}\libopencv_xfeatures2d331.dll
+LIBS += $${MYPATH}\libopencv_features2d331.dll
 LIBS += $${MYPATH}\libopencv_highgui331.dll
 LIBS += $${MYPATH}\libopencv_imgcodecs331.dll
 LIBS += $${MYPATH}\libopencv_imgproc331.dll
-LIBS += $${MYPATH}\libopencv_features2d331.dll
 LIBS += $${MYPATH}\libopencv_calib3d331.dll
+LIBS += $${MYPATH}\libopencv_core331.dll
 
 INCLUDEPATH += $$PWD/lua/lua/include
 DEPENDPATH += $$PWD/lua/lua/include

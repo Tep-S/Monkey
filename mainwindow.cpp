@@ -19,11 +19,11 @@ MainWindow::MainWindow(QWidget *parent) :
     stream(new Stream()),
     handler(new Handler(stream, ui))
 {
-    LuaPusher pusher;
+    //LuaPusher pusher;
     ui->setupUi(this);
     //Tests();
-    //stream->start();
-   // handler->start();
+    stream->start();
+    handler->start();
     Connects();
     Plots();
 
@@ -105,7 +105,7 @@ void MainWindow::Connects(){
 }
 
 void MainWindow::TestTemplate(){
-    seq->TemplateTest();
+   // seq->TemplateTest();
 
 }
 
