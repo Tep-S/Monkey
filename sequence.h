@@ -11,6 +11,9 @@
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/xfeatures2d.hpp"
 #include "opencv2/flann.hpp"
+#include "linefinder.h"
+
+#define PI 3.1415926
 
 using namespace cv::flann;
 
@@ -43,6 +46,7 @@ public:
     void Draw();
     cv::Point TemplateCoord(cv::Mat input, cv::Mat templateIn, double thresh);
     int FlannMatching(cv::Mat input, cv::Mat templateIn);
+    void FindRoad(cv::Mat input);
 private:
     cv::Mat img;
     cv::Mat imgClean;

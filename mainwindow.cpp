@@ -11,6 +11,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <QToolTip>
 #include "lua/luapusher.h"
+#include "linefinder.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -24,6 +25,10 @@ MainWindow::MainWindow(QWidget *parent) :
     //Tests();
     stream->start();
     handler->start();
+
+   // cv::Mat test;
+    //seq->FlannMatching(test, test);
+
     Connects();
     Plots();
 

@@ -43,8 +43,13 @@ while(1){
     //Mat window = stream->GetCropped(rect);
     Mat window;
     cv::cvtColor(stream->imgMain, window, CV_BGRA2BGR);
-    Mat templ = imread( "duck.png", 1 );
+
+    Mat templ = imread( "log/flat.jpg", 1 );
     //Mat window = imread( "img1.jpg", 1 );
+
+   // seq->FindRoad(templ);
+    //msleep(2000);
+   // continue;
 
     Point point = seq->TemplateCoord(window,templ, 0.7);
     if ( (point.x == 0) && (point.y == 0) )

@@ -64,7 +64,8 @@ HEADERS  += mainwindow.h \
     lua/luabridge/LuaBridge.h \
     lua/luabridge/RefCountedObject.h \
     lua/luabridge/RefCountedPtr.h \
-    lua/luapusher.h
+    lua/luapusher.h \
+    linefinder.h
 FORMS    += mainwindow.ui
 
 #INCLUDEPATH += C:\code\opencv\build\include
