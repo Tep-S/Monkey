@@ -47,6 +47,7 @@ public:
     cv::Point TemplateCoord(cv::Mat input, cv::Mat templateIn, double thresh);
     int FlannMatching(cv::Mat input, cv::Mat templateIn);
     void FindRoad(cv::Mat input);
+    cv::Mat ColorMask(cv::Mat input, cv::Scalar low, cv::Scalar high);
 private:
     cv::Mat img;
     cv::Mat imgClean;

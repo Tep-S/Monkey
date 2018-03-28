@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     mouse/BezierCurve.cpp \
     mouse/Normal.cpp \
     mouse/RunMouse.cpp \
-    lua/luapusher.cpp
+    lua/luapusher.cpp \
+    roadmap.cpp
 
 HEADERS  += mainwindow.h \
     settings.h \
@@ -65,7 +66,8 @@ HEADERS  += mainwindow.h \
     lua/luabridge/RefCountedObject.h \
     lua/luabridge/RefCountedPtr.h \
     lua/luapusher.h \
-    linefinder.h
+    linefinder.h \
+    roadmap.h
 FORMS    += mainwindow.ui
 
 #INCLUDEPATH += C:\code\opencv\build\include

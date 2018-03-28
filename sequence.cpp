@@ -55,6 +55,24 @@ void Sequence::ImgAct(int command, float* par, cv::Mat& outImg){
 
 }
 
+cv::Mat Sequence::ColorMask(cv::Mat input, cv::Scalar low, cv::Scalar high){
+
+        using namespace cv;
+        Mat imgHSV;
+        Mat imgThresholded;
+
+        //Convert the captured frame from BGR to HSV
+        cvtColor(input, imgHSV, COLOR_BGR2HSV);
+
+        //Threshold the image
+        inRange(imgHSV, low, high, imgThresholded);
+
+        //morphological opening (remove small objects from the foreground)
+        erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
+        dilate( imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
+        return imgThresholded;
+}
+
 int Sequence::FlannMatching(cv::Mat input, cv::Mat templateIn)
 {
     using namespace cv;
