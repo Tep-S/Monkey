@@ -19,6 +19,15 @@ cv::Mat Stream::GetCropped(cv::Rect rect){
         return imgMain;
 }
 
+cv::Mat Stream::GetAdditionalScreen(){
+    QPixmap screenshot  = QPixmap::grabWindow(QApplication::desktop()->winId());
+    //QScreen screen = QScreen::grabWindow(QApplication::desktop()->winId());
+    QImage imgScreen    = screenshot.toImage();
+    cv::Mat matScreen(imgScreen.height(), imgScreen.width(), CV_8UC4, const_cast<uchar*>(imgScreen.bits()), imgScreen.bytesPerLine());//imgScreen.scanLine());
+    imgAdd = matScreen.clone();
+    return imgAdd;
+}
+
 cv::Mat Stream::GetScreen(){
     QPixmap screenshot  = QPixmap::grabWindow(QApplication::desktop()->winId());
     //QScreen screen = QScreen::grabWindow(QApplication::desktop()->winId());

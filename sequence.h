@@ -37,17 +37,21 @@ class Sequence
 {
 public:
     Sequence();
-    void OpenImage(QString imageName);
+    void    OpenImage(QString imageName);
     QString SaveCommand(SaveCmd cmdIn);
-    void RemoveCommand();
-    void SaveSequence(QString filename);
-    void LoadSequence(QString filename);
-    void ImgAct(int command, float *par, cv::Mat &outImg);
-    void Draw();
-    cv::Point TemplateCoord(cv::Mat input, cv::Mat templateIn, double thresh);
-    int FlannMatching(cv::Mat input, cv::Mat templateIn);
-    void FindRoad(cv::Mat input);
+    void    RemoveCommand();
+    void    SaveSequence(QString filename);
+    void    LoadSequence(QString filename);
+    void    ImgAct(int command, float *par, cv::Mat &outImg);
+    void    Draw();
+    cv::Point TemplateCoord(cv::Mat img, cv::Mat templ, double thresh);
+    int     FlannMatching(cv::Mat input, cv::Mat templateIn);
+    void    FindRoad(cv::Mat input);
     cv::Mat ColorMask(cv::Mat input, cv::Scalar low, cv::Scalar high);
+    void    FindRect(cv::Mat input);
+    void    MotionMask(cv::Mat input, cv::Mat outputMask);
+    int     GetHP(cv::Point pix);
+    void    GetHP_MP();
 private:
     cv::Mat img;
     cv::Mat imgClean;

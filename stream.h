@@ -18,7 +18,8 @@ class Stream: public QThread{
 public:
     Stream();
     cv::Mat GetCropped(cv::Rect rect);
-    cv::Mat imgMain;
+    cv::Mat imgMain, imgAdd;
+    cv::Mat GetAdditionalScreen();
 private:
     int step;
     void run();

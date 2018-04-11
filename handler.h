@@ -18,6 +18,8 @@ public:
     void run();
     void Result();
     void Click(int x, int y);
+    void WindowsInfo();
+    void TestDiff();
 private:
     QCPCurve* curve;
     QVector<double> xPlot, yPlot;

@@ -22,11 +22,21 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     //LuaPusher pusher;
     ui->setupUi(this);
+    cv::Mat one, two;
+    seq->FlannMatching(one, two);
     //Tests();
-    stream->start();
-    handler->start();
-
-   // cv::Mat test;
+    //handler->WindowsInfo();
+   // stream->start();
+    //handler->start();
+    /*while(1){
+        handler->Click(300,300);
+        QThread::msleep(1000);
+    }*/
+    //for(int i = 0; i < 5; i++)
+    //    handler->TestDiff();
+    //seq->FindRect(temp);
+   // seq->GetHP_MP();
+    // cv::Mat test;
     //seq->FlannMatching(test, test);
 
     Connects();
