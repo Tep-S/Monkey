@@ -12,6 +12,7 @@
 #include <QToolTip>
 #include "lua/luapusher.h"
 #include "linefinder.h"
+#include "reader.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -22,8 +23,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     //LuaPusher pusher;
     ui->setupUi(this);
-    cv::Mat one, two;
-    seq->FlannMatching(one, two);
+   // cv::Mat one, two;
+    //seq->FlannMatching(one, two);
+
+    Reader reader;
     //Tests();
     //handler->WindowsInfo();
    // stream->start();

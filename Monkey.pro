@@ -25,7 +25,8 @@ SOURCES += main.cpp\
     mouse/Normal.cpp \
     mouse/RunMouse.cpp \
     lua/luapusher.cpp \
-    roadmap.cpp
+    roadmap.cpp \
+    reader.cpp
 
 HEADERS  += mainwindow.h \
     settings.h \
@@ -67,22 +68,27 @@ HEADERS  += mainwindow.h \
     lua/luabridge/RefCountedPtr.h \
     lua/luapusher.h \
     linefinder.h \
-    roadmap.h
+    roadmap.h \
+    reader.h
 FORMS    += mainwindow.ui
 
 #INCLUDEPATH += C:\code\opencv\build\include
-INCLUDEPATH += C:\Users\Sam\Desktop\code\opencv\build\include
-INCLUDEPATH += C:\Users\Sam\Desktop\code\opencv\opencv_contrib331\modules\xfeatures2d\include
-MYPATH = C:\Users\Sam\Desktop\code\opencv-build\bin
+CV_MAIN     = C:\Users\Sam\Desktop\code
+CV_BIN      = $${CV_MAIN}\opencv-build\bin
+CV_CONTRIB  = $${CV_MAIN}\opencv\opencv_contrib331\modules
+INCLUDEPATH += $${CV_MAIN}\opencv\build\include
+INCLUDEPATH += $${CV_CONTRIB}\xfeatures2d\include
+#INCLUDEPATH += $${CV_CONTRIB}\text\include
 
-LIBS += $${MYPATH}\libopencv_flann331.dll
-LIBS += $${MYPATH}\libopencv_xfeatures2d331.dll
-LIBS += $${MYPATH}\libopencv_features2d331.dll
-LIBS += $${MYPATH}\libopencv_highgui331.dll
-LIBS += $${MYPATH}\libopencv_imgcodecs331.dll
-LIBS += $${MYPATH}\libopencv_imgproc331.dll
-LIBS += $${MYPATH}\libopencv_calib3d331.dll
-LIBS += $${MYPATH}\libopencv_core331.dll
+LIBS += $${CV_BIN}\libopencv_flann331.dll
+LIBS += $${CV_BIN}\libopencv_xfeatures2d331.dll
+LIBS += $${CV_BIN}\libopencv_features2d331.dll
+LIBS += $${CV_BIN}\libopencv_highgui331.dll
+LIBS += $${CV_BIN}\libopencv_imgcodecs331.dll
+LIBS += $${CV_BIN}\libopencv_imgproc331.dll
+LIBS += $${CV_BIN}\libopencv_calib3d331.dll
+LIBS += $${CV_BIN}\libopencv_core331.dll
+LIBS += $${CV_BIN}\libopencv_ml331.dll
 
 INCLUDEPATH += $$PWD/lua/lua/include
 DEPENDPATH += $$PWD/lua/lua/include

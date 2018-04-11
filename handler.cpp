@@ -82,21 +82,13 @@ while(1){
     //Mat window = imread( "img1.jpg", 1 );
 
    // seq->FindRoad(templ);
-    //msleep(2000);
-   // continue;
     Mat templ = imread( "log/duck/0.png", 1 );
     Mat templRes;
     resize(templ, templRes, Size(templ.cols*1.45, templ.rows*1.45));
-    //Point point(0,0);
     Point point = seq->TemplateCoord(window,templRes, 0.4);
     if ( (point.x == 0) && (point.y == 0) ){
         continue;
     }
-    /*for(int i = 0; i < 10; i++){
-        double scale = 1.0 + ((double)i)/20;
-        resize(templ, templRes, Size(templ.cols*scale, templ.rows*scale));
-        Point point = seq->TemplateCoord(window,templRes, 0.7);
-    }*/
     point.x += templRes.cols/2;
     point.y += templRes.rows/2;
     qInfo("point x %d y %d ", point.x, point.y);
@@ -106,7 +98,6 @@ while(1){
     //addWeighted(window,0.5,templRes,0.5,0.0,windowOut);
     char nameBuff[128];
     sprintf(nameBuff,"log/%d.jpg",cntFrame++);
-    qInfo("%s",nameBuff);
     imwrite( nameBuff, window );
 
     //Click(point.x, point.y);
