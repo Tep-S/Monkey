@@ -65,6 +65,32 @@ void CheckBorder(int* param, int* val, int step){
     }
 }
 
+int BigContourIdx(std::vector<std::vector<cv::Point>> contours){
+    using namespace cv;
+    using namespace std;
+    int biggestContourIdx = -1;
+    float biggestContourArea = 0;
+    //Mat drawing = Mat::zeros( hsvMask.size(), CV_8UC3 );
+    Scalar color = Scalar(255, 0, 0);
+    for( int i = 0; i< contours.size(); i++ ){
+        //drawContours( drawing, contours, i, color, 1, 8, hierarchy, 0, cv::Point() );
+        float ctArea= contourArea(contours[i]);
+        if(ctArea > biggestContourArea){
+            biggestContourArea = ctArea;
+            biggestContourIdx = i;
+        }
+    }
+    return biggestContourIdx;
+}
+
+// comparison function object
+bool compareContourAreas ( std::vector<cv::Point> contour1, std::vector<cv::Point> contour2 ) {
+    double i = fabs( contourArea(cv::Mat(contour1)) );
+    double j = fabs( contourArea(cv::Mat(contour2)) );
+    return ( i < j );
+}
+
+
 int Sequence::GetHP(cv::Point pix){
     using namespace cv;
     using namespace std;
@@ -89,7 +115,6 @@ int Sequence::GetHP(cv::Point pix){
         imshow("red",hsvMask);
     }
     vector<vector<Point>> contours;
-        vector<Vec4i> hierarchy;
         findContours(hsvMask,contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
 
         int biggestContourIdx = -1;
@@ -157,7 +182,6 @@ void Sequence::FindRect(cv::Mat input){
 
     Mat redMask, redBGR;
     Vec3b pixel = inHSV.at<Vec3b>(161,68);
-    qInfo("%d %d %d", pixel.val[0], pixel.val[1], pixel.val[2]);
     inRange(inHSV, cv::Scalar(0,140,150), cv::Scalar(30,255,200), redMask);
     namedWindow("allout");
     imshow("allout", in);
@@ -188,17 +212,148 @@ cv::Mat Sequence::ColorMask(cv::Mat input, cv::Scalar low, cv::Scalar high){
     return imgThresholded;
 }
 
+void Sequence::KmeansTest(){
+    using namespace cv;
+    using namespace std;
+        const int MAX_CLUSTERS = 5;
+        Scalar colorTab[] =
+        {
+            Scalar(0, 0, 255),
+            Scalar(0,255,0),
+            Scalar(255,100,100),
+            Scalar(255,0,255),
+            Scalar(0,255,255)
+        };
+        Mat img(500, 500, CV_8UC3);
+        RNG rng(12345);
+        for(;;)
+        {
+            int k, clusterCount = rng.uniform(2, MAX_CLUSTERS+1);
+            int i, sampleCount = rng.uniform(1, 1001);
+            Mat points(sampleCount, 1, CV_32FC2), labels;
+            clusterCount = MIN(clusterCount, sampleCount);
+            Mat centers;
+            /* generate random sample from multigaussian distribution */
+            for( k = 0; k < clusterCount; k++ )
+            {
+                Point center;
+                center.x = rng.uniform(0, img.cols);
+                center.y = rng.uniform(0, img.rows);
+                Mat pointChunk = points.rowRange(k*sampleCount/clusterCount,
+                                                 k == clusterCount - 1 ? sampleCount :
+                                                 (k+1)*sampleCount/clusterCount);
+                rng.fill(pointChunk, RNG::NORMAL, Scalar(center.x, center.y), Scalar(img.cols*0.05, img.rows*0.05));
+            }
+            randShuffle(points, 1, &rng);
+            kmeans(points, clusterCount, labels,
+                TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 10, 1.0),
+                   3, KMEANS_PP_CENTERS, centers);
+            img = Scalar::all(0);
+            for( i = 0; i < sampleCount; i++ )
+            {
+                int clusterIdx = labels.at<int>(i);
+                Point ipt = points.at<Point2f>(i);
+                circle( img, ipt, 2, colorTab[clusterIdx], FILLED, LINE_AA );
+            }
+            imshow("clusters", img);
+            char key = (char)waitKey();
+            if( key == 27 || key == 'q' || key == 'Q' ) // 'ESC'
+                break;
+}
+}
+
 void Sequence::MotionMask(cv::Mat input, cv::Mat outputMask){
-/*    cv::Mat inputTest[3];
-    for(int i = 0; i < 3; i++){
-        inputTest[i]
+    using namespace cv;
+    using namespace std;
+
+    Mat in = imread( "log/rural/rural1.jpg");
+    Mat inHSV;
+    cvtColor(in, inHSV, COLOR_BGR2HSV);
+
+
+    Mat redMask, redBGR;
+    Vec3b pixel = inHSV.at<Vec3b>(357,331);
+    int hsvPixel[3] = {pixel.val[0], pixel.val[1], pixel.val[2]};
+    int low[3], high[3];
+    int step = 15;
+    CheckBorder(low, hsvPixel, -step);
+    CheckBorder(high, hsvPixel, step);
+
+    inRange(inHSV, Scalar(low[0], low[1], low[2]), Scalar(high[0], high[1], high[2]), redMask);
+    qInfo("%d %d %d", pixel[0], pixel[1], pixel[2]);
+  // namedWindow("allout");
+  //  imshow("allout", in);
+  /*   namedWindow("redout");
+    imshow("redout", redMask);
+*/
+    Mat inputTest[3];
+    inputTest[0] = imread("log/rural/rural1.jpg", IMREAD_GRAYSCALE );
+    inputTest[1] = imread("log/rural/rural2.jpg", IMREAD_GRAYSCALE );
+    inputTest[2] = imread("log/rural/rural3.jpg", IMREAD_GRAYSCALE );
+    int morph_elem = 0;
+    int morph_size = 2;
+    Mat element = getStructuringElement( morph_elem, Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
+
+    Mat diff1, diff2, diff3;
+    Mat diffT1, diffT2;
+    Mat threshOut;
+    absdiff(inputTest[0], inputTest[1], diff1);
+    absdiff(inputTest[1], inputTest[2], diff2);
+    morphologyEx(diff1, diff1, CV_MOP_CLOSE, element);
+    morphologyEx(diff2, diff2, CV_MOP_CLOSE, element);
+    threshold(diff1,diffT1,25,255,THRESH_BINARY);
+    threshold(diff2,diffT2,25,255,THRESH_BINARY);
+    bitwise_xor(diffT1, diffT2, diff3, redMask);
+
+    vector<vector<Point>> contours;
+    std::vector<cv::Vec4i> hierarchy;
+    findContours(diff3,contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+    sort(contours.begin(), contours.end(), compareContourAreas);
+
+    RotatedRect rRect = minAreaRect(contours[contours.size()-1]);
+    RotatedRect rRect2 = minAreaRect(contours[contours.size()-2]);
+    Point2f points[4];
+    rRect.points(points);
+    for(int i = 0; i < 4; ++i)
+        line(diff3, points[i], points[(i+1)%4], cv::Scalar(255,255,255), 2);
+
+    //RotatedRect rRect = minAreaRect(contours[bigContourIdx]);
+    Point2f points2[4];
+    rRect2.points(points2);
+    for(int i = 0; i < 4; ++i)
+        line(diff3, points2[i], points2[(i+1)%4], cv::Scalar(255,255,255), 2);
+
+    namedWindow("contours");
+    imshow("contours", diff3);
+
+   /* Mat labels;
+    Mat centers;
+    Mat data;
+    diff3.convertTo(data, CV_32F);
+    kmeans(data, 3, labels,
+                TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 10, 1.0),
+                   3, KMEANS_PP_CENTERS, centers);
+    qInfo("%d %d ", labels.cols, labels.rows);
+    //for( i = 0; i < sample_count; i++ ) {
+    //CvPoint2D32f pt = ((CvPoint2D32f*)points->data.fl)[i];
+    //int cluster_idx = clusters->data.i[i];
+    Scalar colorTab[] ={
+            Scalar(0, 0, 0),
+            Scalar(255,255,255),
+            Scalar(0,0,255)
+    };
+
+    for (int i = 0; i < labels.rows; ++i){
+        int clusterIdx = labels.at<int>(i);
+        qInfo("%d", clusterIdx);
+        Point2f c = data.at<Point2f>(i);
+        //qInfo("%.f %.f", c.x, c.y);
+        circle( in, c, 5, colorTab[clusterIdx], FILLED, LINE_AA );
+        //circle(data, c, 3, Scalar(255,255,255));
     }
-    cv::Mat diff1, diff2;
-    cv::Mat threshOut;
-    cv::absdiff(input, input2, diff1);
-    cv::absdiff(input2, input3, diff2);
-    cv::threshold(diff1,threshOut,40,255,THRESH_BINARY);
-    */
+    namedWindow("motion");
+    imshow("motion", data);*/
+
 }
 
 int Sequence::FlannMatching(cv::Mat input, cv::Mat templateIn)
@@ -207,8 +362,11 @@ int Sequence::FlannMatching(cv::Mat input, cv::Mat templateIn)
     using namespace cv::xfeatures2d;
     //Mat img_1   = input;//IMREAD_GRAYSCALE
    //Mat img_2 = templateIn;//IMREAD_GRAYSCALE
-    Mat img_1 = imread( "log/la2.jpg", IMREAD_GRAYSCALE );
-    Mat img_2 = imread( "log/la2cropp.jpg", IMREAD_GRAYSCALE );
+    //Mat img_1 = imread( "log/la2.jpg", IMREAD_GRAYSCALE );
+    //Mat img_2 = imread( "log/la2cropp.jpg", IMREAD_GRAYSCALE );
+
+    Mat img_1 = imread( "log/rural/rural1.jpg", IMREAD_GRAYSCALE );
+    Mat img_2 = imread( "log/rural/car2.jpg", IMREAD_GRAYSCALE );
 
   if( !img_1.data || !img_2.data ){
       qInfo("read error");

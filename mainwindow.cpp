@@ -23,10 +23,11 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     //LuaPusher pusher;
     ui->setupUi(this);
-   // cv::Mat one, two;
+    cv::Mat one, two;
     //seq->FlannMatching(one, two);
-
-    Reader reader;
+    seq->MotionMask(one, two);
+    //seq->KmeansTest();
+    //Reader reader;
     //Tests();
     //handler->WindowsInfo();
    // stream->start();

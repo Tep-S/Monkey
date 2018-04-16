@@ -31,6 +31,41 @@ void Roadmap::Color2Vertex(){
     }
 }
 
+void TestDir(Point A, Point B){
+    double diffThresh = 10;
+    //Point A(1,2);
+   // Point B(15,25);
+    Point C = B - A;
+    double currentAngle = std::atan2(C.y, C.x);
+    currentAngle *= 180/3.14159;
+
+    Point goal(45,55);
+
+    Point vecGoal = goal - B;
+    double goalAngle = std::atan2(vecGoal.y, vecGoal.x);
+    goalAngle *= 180/3.14159;
+
+
+    double diff = currentAngle - goalAngle;
+    if (fabs(diff) > 180){// 0 360 gap problem
+        if (currentAngle < goalAngle)
+            currentAngle += 360;
+        else
+            goalAngle += 360;
+        diff = currentAngle - goalAngle;
+    }
+    // 0 straight 1 left 2 right
+    enum{ T_STRAIGHT, T_LEFT, T_RIGHT};
+    int changeDir = T_STRAIGHT;
+    if (fabs(diff) > diffThresh){
+        if (diff > 0)
+            changeDir = T_LEFT;
+        else
+            changeDir = T_RIGHT;
+    }
+
+}
+
 bool Roadmap::InLOS(Point a, Point b){
     std::vector<Point> local;
     double l = norm(a-b);

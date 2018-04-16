@@ -2,7 +2,6 @@
 #include <QtGlobal>
 
 Reader::Reader(){
-//Ptr<cv::text::OCRTesseract> ocr = cv::text::OCRTesseract::create();
     //Labeling();
     Testing();
 }
@@ -21,8 +20,7 @@ void Reader::Labeling(){
     Mat sample;
     Mat response_array;
     findContours( con, contours, hierarchy,CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE ); //Find contour
-    for( int i = 0; i< contours.size(); i=hierarchy[i][0] ) // iterate through first hierarchy level contours
-    {
+    for( int i = 0; i< contours.size(); i=hierarchy[i][0] ){ // iterate through first hierarchy level contours
         Rect r= boundingRect(contours[i]); //Find bounding rect for each contour
         rectangle(src,Point(r.x,r.y), Point(r.x+r.width,r.y+r.height), Scalar(0,0,255),2,8,0);
         Mat ROI = thr(r); //Crop the image

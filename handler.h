@@ -20,6 +20,7 @@ public:
     void Click(int x, int y);
     void WindowsInfo();
     void TestDiff();
+    void KeyPress(int type, int msPress);
 private:
     QCPCurve* curve;
     QVector<double> xPlot, yPlot;

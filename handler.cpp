@@ -134,6 +134,19 @@ void Handler::WindowsInfo(){
      qInfo("end");
 }
 
+void Handler::KeyPress(int type, int msPress){
+/*#define VK_LEFT 0x25
+#define VK_UP 0x26
+#define VK_RIGHT 0x27
+#define VK_DOWN 0x28
+    */
+    int type2 = VK_DOWN;
+    keybd_event(type, 0, 0, 0);
+    Sleep(msPress);
+    if (msPress)
+        keybd_event(type, 0, KEYEVENTF_KEYUP, 0);
+}
+
 void Handler::Click(int x, int y)
 {
     const double XSCALEFACTOR = 65535 / (GetSystemMetrics(SM_CXSCREEN) - 1);

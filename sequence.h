@@ -16,6 +16,8 @@
 #define PI 3.1415926
 
 using namespace cv::flann;
+//using namespace cv;
+//using namespace std;
 
 enum{
     Do_Gray,
@@ -52,6 +54,7 @@ public:
     void    MotionMask(cv::Mat input, cv::Mat outputMask);
     int     GetHP(cv::Point pix);
     void    GetHP_MP();
+    void KmeansTest();
 private:
     cv::Mat img;
     cv::Mat imgClean;
