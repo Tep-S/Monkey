@@ -13,6 +13,44 @@
 #include "lua/luapusher.h"
 #include "linefinder.h"
 #include "reader.h"
+#include <QDir>
+
+void TestFolder(){
+    using namespace std;
+    using namespace cv;
+    QString mainPath = "C:/Users/Sam/Desktop/autoscreens/bad/";
+    QDir folder(mainPath);
+    folder.setNameFilters(QStringList()<<"*.jpeg");
+    QStringList fileList = folder.entryList();
+    for(int i = 0; i < fileList.size(); i++){
+        QString tempPath = mainPath + (QString)fileList.at(i);
+        Mat in = imread( tempPath.toStdString().c_str(), IMREAD_GRAYSCALE);
+        //Size size(50, 50);
+        //Mat out;
+        //resize(in, out, size);
+        //in.resize(size);
+        //Mat cropped = in(Rect(100,75,700,550));
+        imwrite(tempPath.toStdString().c_str(), in);
+    }
+}
+
+void CreateFilesDescriptor(){
+    using namespace std;
+    using namespace cv;
+    QString mainPath = "C:/Users/Sam/Desktop/autoscreens/bad/";
+    QDir folder(mainPath);
+    folder.setNameFilters(QStringList()<<"*.jpeg");
+    QStringList fileList = folder.entryList();
+    QFile file("C:/Users/Sam/Desktop/autoscreens/bad.txt");
+    if (!file.open(QIODevice::ReadWrite | QIODevice::Text))
+            return;
+    for(int i = 0; i < fileList.size(); i++){
+        //QString tempPath = "good\\" + (QString)fileList.at(i) + " 1 0 0 50 50 \n";
+        QString tempPath = "bad\\" + (QString)fileList.at(i) + "\n";
+        file.write(tempPath.toUtf8());
+    }
+    file.close();
+}
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -21,11 +59,14 @@ MainWindow::MainWindow(QWidget *parent) :
     stream(new Stream()),
     handler(new Handler(stream, ui))
 {
+    seq->Haar();
+    //TestFolder();
+    //CreateFilesDescriptor();
     //LuaPusher pusher;
     ui->setupUi(this);
     cv::Mat one, two;
     //seq->FlannMatching(one, two);
-    seq->MotionMask(one, two);
+    /*seq->MotionMask(one, two); last in use*/
     //seq->KmeansTest();
     //Reader reader;
     //Tests();
@@ -47,6 +88,7 @@ MainWindow::MainWindow(QWidget *parent) :
     Plots();
 
 }
+
 
 void MainWindow::Plots(){
     ui->customPlot->addGraph();

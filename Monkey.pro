@@ -89,6 +89,7 @@ LIBS += $${CV_BIN}\libopencv_imgproc331.dll
 LIBS += $${CV_BIN}\libopencv_calib3d331.dll
 LIBS += $${CV_BIN}\libopencv_core331.dll
 LIBS += $${CV_BIN}\libopencv_ml331.dll
+LIBS += $${CV_BIN}\libopencv_objdetect331.dll
 
 INCLUDEPATH += $$PWD/lua/lua/include
 DEPENDPATH += $$PWD/lua/lua/include

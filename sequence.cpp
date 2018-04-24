@@ -1,5 +1,7 @@
 #include "sequence.h"
 //#include "opencv2/opencv_modules.hpp"
+#include "opencv2/objdetect.hpp"
+#include <QDir>
 Sequence::Sequence(){
     cmdCnt = 0;
 }
@@ -55,6 +57,40 @@ void Sequence::ImgAct(int command, float* par, cv::Mat& outImg){
 
 }
 
+void Sequence::Haar(){
+    using namespace std;
+    using namespace cv;
+    String face_cascade_name = "log/cascade.xml";
+    CascadeClassifier face_cascade;
+    if( !face_cascade.load( face_cascade_name ) ){ qInfo("--(!)Error loading face cascade\n"); return; };
+    QString mainPath = "C:/Users/Sam/Desktop/autoscreens2/real/";
+    QDir folder(mainPath);
+    folder.setNameFilters(QStringList()<<"*.jpeg");
+    QStringList fileList = folder.entryList();
+    for(int i = 0; i < fileList.size(); i++){
+        QString tempPath = mainPath + (QString)fileList.at(i);
+        Mat frame = imread(tempPath.toStdString().c_str());
+        if (frame.empty()){
+            qInfo("no image");
+            return;
+        }
+        Mat frame_gray;
+        cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
+        std::vector<Rect> faces;
+        equalizeHist( frame_gray, frame_gray );
+        face_cascade.detectMultiScale( frame_gray, faces, 1.1, 2, 0|CASCADE_SCALE_IMAGE, Size(30, 30) );
+        for ( size_t i = 0; i < faces.size(); i++ ){
+            Point center( faces[i].x + faces[i].width/2, faces[i].y + faces[i].height/2 );
+            ellipse( frame, center, Size( faces[i].width/2, faces[i].height/2 ), 0, 0, 360, Scalar( 255, 0, 255 ), 4, 8, 0 );
+           // Mat faceROI = frame_gray( faces[i] );
+        }
+        namedWindow("haar");
+        imshow( "haar", frame );
+        char c = (char)waitKey(50);
+        if( c == 27 ) { break; } // escape
+    }
+}
+
 void CheckBorder(int* param, int* val, int step){
     for(int i = 0; i < 3; i++){
         param[i] = val[i] + step;
@@ -85,8 +121,8 @@ int BigContourIdx(std::vector<std::vector<cv::Point>> contours){
 
 // comparison function object
 bool compareContourAreas ( std::vector<cv::Point> contour1, std::vector<cv::Point> contour2 ) {
-    double i = fabs( contourArea(cv::Mat(contour1)) );
-    double j = fabs( contourArea(cv::Mat(contour2)) );
+    double i = fabs( cv::contourArea(cv::Mat(contour1)) );
+    double j = fabs( cv::contourArea(cv::Mat(contour2)) );
     return ( i < j );
 }
 
@@ -262,6 +298,15 @@ void Sequence::KmeansTest(){
 }
 }
 
+void DrawRotRect(cv::Mat image, std::vector<cv::Point> contours){
+    using namespace cv;
+    RotatedRect rRect = minAreaRect(contours);
+    Point2f points[4];
+    rRect.points(points);
+    for(int i = 0; i < 4; ++i)
+        line(image, points[i], points[(i+1)%4], cv::Scalar(255,255,255), 2);
+}
+
 void Sequence::MotionMask(cv::Mat input, cv::Mat outputMask){
     using namespace cv;
     using namespace std;
@@ -310,18 +355,8 @@ void Sequence::MotionMask(cv::Mat input, cv::Mat outputMask){
     findContours(diff3,contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
     sort(contours.begin(), contours.end(), compareContourAreas);
 
-    RotatedRect rRect = minAreaRect(contours[contours.size()-1]);
-    RotatedRect rRect2 = minAreaRect(contours[contours.size()-2]);
-    Point2f points[4];
-    rRect.points(points);
-    for(int i = 0; i < 4; ++i)
-        line(diff3, points[i], points[(i+1)%4], cv::Scalar(255,255,255), 2);
-
-    //RotatedRect rRect = minAreaRect(contours[bigContourIdx]);
-    Point2f points2[4];
-    rRect2.points(points2);
-    for(int i = 0; i < 4; ++i)
-        line(diff3, points2[i], points2[(i+1)%4], cv::Scalar(255,255,255), 2);
+    DrawRotRect(diff3, contours[contours.size()-1]);
+    DrawRotRect(diff3, contours[contours.size()-2]);
 
     namedWindow("contours");
     imshow("contours", diff3);

@@ -54,6 +54,7 @@ public:
     void    MotionMask(cv::Mat input, cv::Mat outputMask);
     int     GetHP(cv::Point pix);
     void    GetHP_MP();
+    void    Haar();
     void KmeansTest();
 private:
     cv::Mat img;
