@@ -21,6 +21,7 @@ public:
     void WindowsInfo();
     void TestDiff();
     void KeyPress(int type, int msPress);
+    void CharacterAngle();
 private:
     QCPCurve* curve;
     QVector<double> xPlot, yPlot;

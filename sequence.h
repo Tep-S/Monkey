@@ -46,8 +46,8 @@ public:
     void    LoadSequence(QString filename);
     void    ImgAct(int command, float *par, cv::Mat &outImg);
     void    Draw();
-    cv::Point TemplateCoord(cv::Mat img, cv::Mat templ, double thresh);
-    int     FlannMatching(cv::Mat input, cv::Mat templateIn);
+    cv::Point TemplateCoord(cv::Mat img, cv::Mat templ, double thresh, double& maxLock);
+    cv::Point FlannMatching(cv::Mat input, cv::Mat templateIn);
     void    FindRoad(cv::Mat input);
     cv::Mat ColorMask(cv::Mat input, cv::Scalar low, cv::Scalar high);
     void    FindRect(cv::Mat input);
@@ -56,6 +56,9 @@ public:
     void    GetHP_MP();
     void    Haar();
     void KmeansTest();
+    cv::Vec3b PixHsv(cv::Mat in, cv::Point pix);
+    cv::Mat ColorMask2(cv::Mat in, cv::Vec3b hsvDel, int colorWide);
+    void DrawRotRect(cv::Mat image, std::vector<cv::Point> contours);
 private:
     cv::Mat img;
     cv::Mat imgClean;

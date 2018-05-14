@@ -33,6 +33,65 @@ QString type2str(int type) {
   return r;
 }
 
+bool compareContourAreas2 ( std::vector<cv::Point> contour1, std::vector<cv::Point> contour2 ) {
+    double i = fabs( cv::contourArea(cv::Mat(contour1)) );
+    double j = fabs( cv::contourArea(cv::Mat(contour2)) );
+    return ( i < j );
+}
+
+void Handler::CharacterAngle(){
+    using namespace cv;
+    using namespace std;
+    Mat hsv;
+    Mat in      = imread( "log/map_tank.jpg");
+    Mat templ   = imread("log/point2.jpg", IMREAD_GRAYSCALE);
+    cvtColor(in, hsv, COLOR_BGR2HSV);
+    Vec3b pix;
+    pix.val[0] = pix.val[1] = pix.val[2] = 240;
+    Mat whiteMask = seq->ColorMask2(hsv, pix, 15);
+    vector<vector<Point>> contours;
+    findContours(whiteMask,contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+    Mat drawing = Mat::zeros( whiteMask.size(), CV_8UC3 );
+    sort(contours.begin(), contours.end(), compareContourAreas2);//25 x 21
+   /* RotatedRect rRect = minAreaRect(contours[contours.size()-1]);
+    Point2f points[4];
+    rRect.points(points);
+    int minX = 10000;
+    int maxX = 0;
+    for(int i = 0; i < 4; ++i){
+        if (points[i].x > maxX)
+            maxX = points[i].x;
+        if (points[i].x < minX)
+            minX = points[i].x;
+    }*/
+
+    Rect recRoi(272, 188, 50, 50);
+    Mat pointRaw = whiteMask(recRoi);
+
+    namedWindow("whitemask");
+    imshow("whitemask", pointRaw);
+
+    //seq->FlannMatching(input, templateIn);
+    Mat dst;
+    Point2f pc(whiteMask.cols/2., whiteMask.rows/2.);
+    double maxLock = 0.0;
+    for(int i = 0; i < 360; i+=3){
+        Mat r = getRotationMatrix2D(pc, i, 1.0);
+        warpAffine(whiteMask, dst, r, whiteMask.size());
+        seq->TemplateCoord(dst, templ, 0.7, maxLock);
+        xPlot.append(i);
+        yPlot.append(maxLock);
+    }
+
+    ui->customPlot->graph(0)->setData(xPlot , yPlot);
+    ui->customPlot->replot();
+    //get white color
+    //find object coord
+    //get roi
+    //rotate pattern and find best overlap
+
+}
+
 void Handler::TestDiff(){
     cv::Mat inputTest[3];
     qInfo("go");
@@ -85,7 +144,8 @@ while(1){
     Mat templ = imread( "log/duck/0.png", 1 );
     Mat templRes;
     resize(templ, templRes, Size(templ.cols*1.45, templ.rows*1.45));
-    Point point = seq->TemplateCoord(window,templRes, 0.4);
+    double maxLock;
+    Point point = seq->TemplateCoord(window,templRes, 0.4, maxLock);
     if ( (point.x == 0) && (point.y == 0) ){
         continue;
     }
@@ -149,33 +209,30 @@ void Handler::KeyPress(int type, int msPress){
 
 void Handler::Click(int x, int y)
 {
-    const double XSCALEFACTOR = 65535 / (GetSystemMetrics(SM_CXSCREEN) - 1);
-    const double YSCALEFACTOR = 65535 / (GetSystemMetrics(SM_CYSCREEN) - 1);
+    const double xScale = 65535 / (GetSystemMetrics(SM_CXSCREEN) - 1);
+    const double yScale = 65535 / (GetSystemMetrics(SM_CYSCREEN) - 1);
 
     POINT cursorPos;
     GetCursorPos(&cursorPos);
 
-    double cx = cursorPos.x * XSCALEFACTOR;
-    double cy = cursorPos.y * YSCALEFACTOR;
+    double cx = cursorPos.x * xScale;
+    double cy = cursorPos.y * yScale;
 
-    double nx = x * XSCALEFACTOR;
-    double ny = y * YSCALEFACTOR;
+    double nx = x * xScale;
+    double ny = y * yScale;
 
     INPUT Input={0};
     Input.type = INPUT_MOUSE;
 
+    Input.mi.dwFlags = MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP;
     Input.mi.dx = (LONG)nx;
     Input.mi.dy = (LONG)ny;
-
-    Input.mi.dwFlags = MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP;
-
     SendInput(1,&Input,sizeof(INPUT));
-    //SendInput(1,&Input,sizeof(INPUT));
 
     Input.mi.dx = (LONG)cx;
     Input.mi.dy = (LONG)cy;
-
     Input.mi.dwFlags = MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE;
-
     SendInput(1,&Input,sizeof(INPUT));
 }
+
+

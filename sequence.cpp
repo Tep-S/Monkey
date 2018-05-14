@@ -2,6 +2,10 @@
 //#include "opencv2/opencv_modules.hpp"
 #include "opencv2/objdetect.hpp"
 #include <QDir>
+
+using namespace cv;
+using namespace std;
+
 Sequence::Sequence(){
     cmdCnt = 0;
 }
@@ -58,12 +62,10 @@ void Sequence::ImgAct(int command, float* par, cv::Mat& outImg){
 }
 
 void Sequence::Haar(){
-    using namespace std;
-    using namespace cv;
-    String face_cascade_name = "log/cascade.xml";
+    String face_cascade_name = "log/cascade_tank2.xml";
     CascadeClassifier face_cascade;
     if( !face_cascade.load( face_cascade_name ) ){ qInfo("--(!)Error loading face cascade\n"); return; };
-    QString mainPath = "C:/Users/Sam/Desktop/autoscreens2/real/";
+    QString mainPath = "C:/Users/Sam/Desktop/autoscreens2/tank/orig/tank_train/";
     QDir folder(mainPath);
     folder.setNameFilters(QStringList()<<"*.jpeg");
     QStringList fileList = folder.entryList();
@@ -102,8 +104,6 @@ void CheckBorder(int* param, int* val, int step){
 }
 
 int BigContourIdx(std::vector<std::vector<cv::Point>> contours){
-    using namespace cv;
-    using namespace std;
     int biggestContourIdx = -1;
     float biggestContourArea = 0;
     //Mat drawing = Mat::zeros( hsvMask.size(), CV_8UC3 );
@@ -126,58 +126,81 @@ bool compareContourAreas ( std::vector<cv::Point> contour1, std::vector<cv::Poin
     return ( i < j );
 }
 
+cv::Vec3b Sequence::PixHsv(cv::Mat in, cv::Point pix){
+    //Vec3b pixelT = in.at<Vec3b>(pix.y, pix.x);
+    //Vec3b pixel;
+    //cvtColor(pixelT, pixel, COLOR_BGR2HSV);
 
-int Sequence::GetHP(cv::Point pix){
-    using namespace cv;
-    using namespace std;
-    int debug  = 1;
-    Mat hsv, hsvMask;
-    Mat in = imread( "log/statusbar.jpg");
-    cvtColor(in,hsv, COLOR_BGR2HSV);
-    //circle(in,Point(76,18),10,Scalar(0,255,0));//x, y
-    namedWindow("input");
-    imshow("input",in);
-    Vec3b pixel = hsv.at<Vec3b>(pix.y, pix.x);//y, x
-    //qInfo("%d %d %d", pixel.val[0], pixel.val[1], pixel.val[2]);
-    int hsvPixel[3] = {pixel.val[0], pixel.val[1], pixel.val[2]};
+    //old way
+    Mat hsv;
+    cvtColor(in, hsv, COLOR_BGR2HSV);
+    Vec3b pixel = hsv.at<Vec3b>(pix.y, pix.x);
+
+    return pixel;
+}
+
+cv::Mat Sequence::ColorMask2(cv::Mat in, cv::Vec3b hsvDel, int colorWide){
+    qInfo("%d %d %d", hsvDel.val[0], hsvDel.val[1], hsvDel.val[2]);
+    int hsvPixel[3] = {hsvDel.val[0], hsvDel.val[1], hsvDel.val[2]};
     int low[3], high[3];
-    int step = 15;
+    int step = colorWide;
     CheckBorder(low, hsvPixel, -step);
     CheckBorder(high, hsvPixel, step);
 
+    Mat hsv, hsvMask;
+    cvtColor(in, hsv, COLOR_HSV2BGR);
     inRange(hsv, Scalar(low[0], low[1], low[2]), Scalar(high[0], high[1], high[2]), hsvMask);
+    imshow("inmask", hsvMask);
+    //imwrite("log/point.jpg",hsvMask);
+    return hsvMask;
+}
+/*
+void DeleteColor(cv::Mat in, cv::Point pix){
+    cv::Mat gray, maskInv, out;
+    cv::Vec3b hsvDel = PixHsv(in, pix);
+    cv::Mat mask = ColorMask2(in, hsvDel);
+    cv::bitwise_not(mask, maskInv);
+    cv::cvtColor(in, gray, cv::COLOR_BGR2GRAY);
+    cv::bitwise_and(gray, gray, out, maskInv);
+}*/
+
+void Sequence::DrawRotRect(cv::Mat image, std::vector<cv::Point> contours){
+    RotatedRect rRect = minAreaRect(contours);
+    Point2f points[4];
+    rRect.points(points);
+    for(int i = 0; i < 4; ++i)
+        line(image, points[i], points[(i+1)%4], cv::Scalar(255,255,255), 2);
+}
+
+int Sequence::GetHP(cv::Point pix){
+    int debug = 1;
+
+    Mat in = imread( "log/statusbar.jpg");
+    cv::Vec3b hsvDel = PixHsv(in, pix);
+    Mat hsvMask = ColorMask2(in, hsvDel, 90);
     if(debug){
         namedWindow("red");
         imshow("red",hsvMask);
     }
     vector<vector<Point>> contours;
         findContours(hsvMask,contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-
-        int biggestContourIdx = -1;
-        float biggestContourArea = 0;
         Mat drawing = Mat::zeros( hsvMask.size(), CV_8UC3 );
-        Scalar color = Scalar(255, 0, 0);
-        for( int i = 0; i< contours.size(); i++ ){
-            //drawContours( drawing, contours, i, color, 1, 8, hierarchy, 0, cv::Point() );
-            float ctArea= contourArea(contours[i]);
-            if(ctArea > biggestContourArea){
-                biggestContourArea = ctArea;
-                biggestContourIdx = i;
-            }
-        }
-        RotatedRect rRect = minAreaRect(contours[biggestContourIdx]);
-        cv::Point2f points[4];
-        rRect.points(points);
+        sort(contours.begin(), contours.end(), compareContourAreas);
+        DrawRotRect(drawing, contours[contours.size()-1]);
+
+       // RotatedRect rRect = minAreaRect(contours[biggestContourIdx]);
+       // cv::Point2f points[4];
+        //rRect.points(points);
         int minX = 10000;
         int maxX = 0;
-        for(int i = 0; i < 4; ++i){
+        /*for(int i = 0; i < 4; ++i){
             if (points[i].x > maxX)
                 maxX = points[i].x;
             if (points[i].x < minX)
                 minX = points[i].x;
             if(debug)
                 line(drawing, points[i], points[(i+1)%4], cv::Scalar(0,0,255), 2);
-        }
+        }*/
         qInfo("min %d max %d", minX, maxX);
         if(debug){
         //drawContours( drawing, contours, biggestContourIdx, color, 1, 8, hierarchy, 0, cv::Point() );
@@ -197,7 +220,6 @@ void Sequence::GetHP_MP(){
 }
 
 void Sequence::FindRect(cv::Mat input){
-    using namespace cv;
     Mat in = imread( "log/la2.jpg");//, IMREAD_GRAYSCALE );
     /*Mat inGray;
     cvtColor(in, inGray, COLOR_BGR2GRAY);
@@ -231,8 +253,6 @@ void Sequence::FindRect(cv::Mat input){
 }
 
 cv::Mat Sequence::ColorMask(cv::Mat input, cv::Scalar low, cv::Scalar high){
-
-    using namespace cv;
     Mat imgHSV;
     Mat imgThresholded;
 
@@ -249,8 +269,6 @@ cv::Mat Sequence::ColorMask(cv::Mat input, cv::Scalar low, cv::Scalar high){
 }
 
 void Sequence::KmeansTest(){
-    using namespace cv;
-    using namespace std;
         const int MAX_CLUSTERS = 5;
         Scalar colorTab[] =
         {
@@ -298,19 +316,7 @@ void Sequence::KmeansTest(){
 }
 }
 
-void DrawRotRect(cv::Mat image, std::vector<cv::Point> contours){
-    using namespace cv;
-    RotatedRect rRect = minAreaRect(contours);
-    Point2f points[4];
-    rRect.points(points);
-    for(int i = 0; i < 4; ++i)
-        line(image, points[i], points[(i+1)%4], cv::Scalar(255,255,255), 2);
-}
-
 void Sequence::MotionMask(cv::Mat input, cv::Mat outputMask){
-    using namespace cv;
-    using namespace std;
-
     Mat in = imread( "log/rural/rural1.jpg");
     Mat inHSV;
     cvtColor(in, inHSV, COLOR_BGR2HSV);
@@ -391,9 +397,8 @@ void Sequence::MotionMask(cv::Mat input, cv::Mat outputMask){
 
 }
 
-int Sequence::FlannMatching(cv::Mat input, cv::Mat templateIn)
+cv::Point Sequence::FlannMatching(cv::Mat input, cv::Mat templateIn)
 {
-    using namespace cv;
     using namespace cv::xfeatures2d;
     //Mat img_1   = input;//IMREAD_GRAYSCALE
    //Mat img_2 = templateIn;//IMREAD_GRAYSCALE
@@ -405,7 +410,7 @@ int Sequence::FlannMatching(cv::Mat input, cv::Mat templateIn)
 
   if( !img_1.data || !img_2.data ){
       qInfo("read error");
-    return -1;
+    //return -1;
    }
 
   //-- Step 1: Detect the keypoints using SURF Detector, compute the descriptors
@@ -454,6 +459,7 @@ int Sequence::FlannMatching(cv::Mat input, cv::Mat templateIn)
   for( int i = 0; i < matchSize; i++ )
       pAvg += (Point2d)keypoints_1[good_matches[i].queryIdx].pt;
 
+  return Point(pAvg);
   Point roiCenter(pAvg.x / matchSize, pAvg.y / matchSize);
   circle(img_matches, roiCenter, 50, Scalar(255,0,0));
   imshow( "Good Matches", img_matches );
@@ -464,9 +470,7 @@ int Sequence::FlannMatching(cv::Mat input, cv::Mat templateIn)
   */
 }
 
-cv::Point Sequence::TemplateCoord(cv::Mat img, cv::Mat templ, double thresh){
-    using namespace std;
-    using namespace cv;
+cv::Point Sequence::TemplateCoord(cv::Mat img, cv::Mat templ, double thresh, double& maxLock){
     Mat result;
     int match_method = 5;
 
@@ -486,10 +490,9 @@ cv::Point Sequence::TemplateCoord(cv::Mat img, cv::Mat templ, double thresh){
 
     minMaxLoc( result, &minVal, &maxVal, &minLoc, &maxLoc, Mat() );
     qInfo("min %.2f max %.2f", minVal, maxVal);
-    if (maxVal < thresh){
-        //matchLoc.x = matchLoc.y = 0;
+    maxLock = maxVal;
+    if (maxVal < thresh)
         return matchLoc;
-    }
 
     /// For SQDIFF and SQDIFF_NORMED, the best matches are lower values. For all the other methods, the higher the better
     if( match_method  == CV_TM_SQDIFF || match_method == CV_TM_SQDIFF_NORMED )
@@ -583,9 +586,6 @@ void Sequence::LoadSequence(QString filename){
 }
 
 void Sequence::FindRoad(cv::Mat input){
-
-using namespace cv;
-using namespace std;
 
     // Set-Up
     int houghVote = 200;

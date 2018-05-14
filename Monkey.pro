@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     mouse/RunMouse.cpp \
     lua/luapusher.cpp \
     roadmap.cpp \
-    reader.cpp
+    reader.cpp \
+    actionlog.cpp
 
 HEADERS  += mainwindow.h \
     settings.h \
@@ -69,7 +70,8 @@ HEADERS  += mainwindow.h \
     lua/luapusher.h \
     linefinder.h \
     roadmap.h \
-    reader.h
+    reader.h \
+    actionlog.h
 FORMS    += mainwindow.ui
 
 #INCLUDEPATH += C:\code\opencv\build\include

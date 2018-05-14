@@ -14,42 +14,102 @@
 #include "linefinder.h"
 #include "reader.h"
 #include <QDir>
+#include "actionlog.h"
 
-void TestFolder(){
+enum{ DESCR_GOOD, DESCR_BAD};
+
+void TestFolder(QString mainPath, Sequence* seq){
     using namespace std;
     using namespace cv;
-    QString mainPath = "C:/Users/Sam/Desktop/autoscreens/bad/";
     QDir folder(mainPath);
     folder.setNameFilters(QStringList()<<"*.jpeg");
     QStringList fileList = folder.entryList();
-    for(int i = 0; i < fileList.size(); i++){
+
+    int test = 0;
+    Rect cropArea(531,164,1364 - 531,649 - 164);
+    Size sizeOut(50, 50);
+    Point delColor[2];
+    delColor[0] = Point(454, 646);
+    delColor[1] = Point(1438, 607);
+
+    //find color by point
+   /* QString tempPath = mainPath + (QString)fileList.at(0);
+    Mat inTest = imread( tempPath.toStdString().c_str());
+    Vec3b hsvDel[2];
+    for(int i = 0; i < 2; i++){
+        hsvDel[i] = seq->PixHsv(inTest, delColor[i]);
+        //qInfo("%d %d %d", hsvDel[i].val[0], hsvDel[i].val[1], hsvDel[i].val[2]);
+    }*/
+
+    int listLen = test ? 1 : fileList.size();
+
+    for(int i = 0; i < listLen; i++){
         QString tempPath = mainPath + (QString)fileList.at(i);
-        Mat in = imread( tempPath.toStdString().c_str(), IMREAD_GRAYSCALE);
-        //Size size(50, 50);
-        //Mat out;
-        //resize(in, out, size);
-        //in.resize(size);
-        //Mat cropped = in(Rect(100,75,700,550));
-        imwrite(tempPath.toStdString().c_str(), in);
+        Mat in = imread( tempPath.toStdString().c_str());
+        if (in.empty()){
+            qInfo("no image!");
+            return;
+        }
+        Mat cropped = in(cropArea);
+        //delete color
+       /* Mat maskInv[2], out1, out2;
+        for(int i = 0; i < 2; i++){
+            Mat mask = seq->ColorMask2(in, hsvDel[i]);
+            cv::bitwise_not(mask, maskInv[i]);
+        }
+        cv::bitwise_and(in, in, out1, maskInv[0]);
+        cv::bitwise_and(out1, out1, out2, maskInv[1]);
+        imshow("testy", out2);
+        return;*/
+        Mat gray;
+        cvtColor(cropped, gray, COLOR_BGR2GRAY);
+
+        //to grayscale
+
+        Mat small;
+        resize(gray, small, sizeOut);
+        if (test){
+            namedWindow("test_cropp");
+            imshow("test_cropp", cropped);
+            namedWindow("resize");
+            imshow("resize", small);
+            char c = (char)waitKey(500);
+            if( c == 27 ) { break; } // escape
+        }else
+            imwrite(tempPath.toStdString().c_str(), small);
+
     }
 }
 
-void CreateFilesDescriptor(){
-    using namespace std;
-    using namespace cv;
-    QString mainPath = "C:/Users/Sam/Desktop/autoscreens/bad/";
+void CreateFilesDescriptor(QString mainPath, QString destPath, int type){
     QDir folder(mainPath);
     folder.setNameFilters(QStringList()<<"*.jpeg");
     QStringList fileList = folder.entryList();
-    QFile file("C:/Users/Sam/Desktop/autoscreens/bad.txt");
+    QFile file(destPath);
     if (!file.open(QIODevice::ReadWrite | QIODevice::Text))
             return;
     for(int i = 0; i < fileList.size(); i++){
-        //QString tempPath = "good\\" + (QString)fileList.at(i) + " 1 0 0 50 50 \n";
-        QString tempPath = "bad\\" + (QString)fileList.at(i) + "\n";
+        QString tempPath;
+        if (type == DESCR_GOOD)
+            tempPath = "good\\" + (QString)fileList.at(i) + " 1 0 0 50 50 \n";
+        else
+            tempPath = "bad\\" + (QString)fileList.at(i) + "\n";
         file.write(tempPath.toUtf8());
     }
     file.close();
+}
+
+void HaarTests(Sequence* seq){
+    QString screenPath = "C:/Users/Sam/Desktop/autoscreens2/tank/good/";
+    seq->Haar();
+    //TestFolder(screenPath, seq);
+    //QString badPath = "C:/Users/Sam/Desktop/autoscreens/bad/";
+    QString destFile = "C:/Users/Sam/Desktop/autoscreens2/tank/good.txt";
+
+    int type = DESCR_GOOD;
+    //CreateFilesDescriptor(screenPath, destFile, type);
+    //opencv_traincascade.exe -data haarcascade -vec samples.vec -bg bad.txt -numStages 16 -minhitrate
+    //0.999 -maxFalseAlarmRate 0.4 -numPos 312 -numNeg 911 -w 20 -h 20 -mode ALL -precalcValBufSize 2048 -precalcIdxBufSize 2048
 }
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -59,11 +119,14 @@ MainWindow::MainWindow(QWidget *parent) :
     stream(new Stream()),
     handler(new Handler(stream, ui))
 {
-    seq->Haar();
-    //TestFolder();
-    //CreateFilesDescriptor();
-    //LuaPusher pusher;
     ui->setupUi(this);
+    Plots();
+    ActionLog actlog;
+    //handler->MouseHookTest();
+    //HaarTests(seq);
+   // handler->CharacterAngle();
+    //LuaPusher pusher;
+
     cv::Mat one, two;
     //seq->FlannMatching(one, two);
     /*seq->MotionMask(one, two); last in use*/
@@ -85,21 +148,21 @@ MainWindow::MainWindow(QWidget *parent) :
     //seq->FlannMatching(test, test);
 
     Connects();
-    Plots();
+
 
 }
 
 
 void MainWindow::Plots(){
     ui->customPlot->addGraph();
-    ui->customPlot->xAxis->setRange(0.0, 2000.0);
-    ui->customPlot->yAxis->setRange(0.0, 2000.0);
-    QPen dotPen(Qt::red, 1, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin);
-    ui->customPlot->graph(0)->setPen(dotPen);
+    ui->customPlot->xAxis->setRange(0.0, 360.0);
+    ui->customPlot->yAxis->setRange(0.0, 1.0);
+   // QPen dotPen(Qt::red, 1, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin);
+   // ui->customPlot->graph(0)->setPen(dotPen);
 
 
     //plot test
-
+#if 0
     QCPCurve *fermatSpiral1 = new QCPCurve(ui->customPlot2->xAxis, ui->customPlot2->yAxis);
     // generate the curve data points:
     const int pointCount = 500;
@@ -123,6 +186,7 @@ void MainWindow::Plots(){
     ui->customPlot2->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     ui->customPlot2->axisRect()->setupFullAxesBox();
     ui->customPlot2->rescaleAxes();
+#endif
 }
 
 void MainWindow::Tests(){
