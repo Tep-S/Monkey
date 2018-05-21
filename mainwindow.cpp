@@ -121,7 +121,11 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     Plots();
-    ActionLog actlog;
+    //seq->GetHP(Point(450, 750));
+    seq->FindTarget();
+    //ActionLog actlog;
+    //actlog.KeyPress(1, 2);
+    //seq->ImgKmeans();
     //handler->MouseHookTest();
     //HaarTests(seq);
    // handler->CharacterAngle();
@@ -133,7 +137,8 @@ MainWindow::MainWindow(QWidget *parent) :
     //seq->KmeansTest();
     //Reader reader;
     //Tests();
-    //handler->WindowsInfo();
+    //actlog.WindowsInfo();
+    //actlog.KeyPress(1, 2);
    // stream->start();
     //handler->start();
     /*while(1){

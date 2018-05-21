@@ -11,22 +11,25 @@
 #include <QMainWindow>
 #include "ui_mainwindow.h"
 #include "qcustomplot.h"
+#include "actionlog.h"
 
 class Handler: public QThread{
 public:
     Handler(Stream *streamIn, Ui::MainWindow *uiIn);
     void run();
     void Result();
-    void Click(int x, int y);
-    void WindowsInfo();
+    //void Click(int x, int y);
+    //void WindowsInfo();
     void TestDiff();
-    void KeyPress(int type, int msPress);
+   // void KeyPress(int type, int msPress);
     void CharacterAngle();
+    void La2();
 private:
     QCPCurve* curve;
     QVector<double> xPlot, yPlot;
     Ui::MainWindow *ui;
     Sequence* seq;
+    ActionLog* act;
     Stream* stream;
     cv::Mat imgIn;
     cv::Rect rect;

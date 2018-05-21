@@ -59,6 +59,8 @@ public:
     cv::Vec3b PixHsv(cv::Mat in, cv::Point pix);
     cv::Mat ColorMask2(cv::Mat in, cv::Vec3b hsvDel, int colorWide);
     void DrawRotRect(cv::Mat image, std::vector<cv::Point> contours);
+    cv::Mat ImgKmeans(cv::Mat src);
+    void FindTarget();
 private:
     cv::Mat img;
     cv::Mat imgClean;

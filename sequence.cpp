@@ -95,6 +95,7 @@ void Sequence::Haar(){
 
 void CheckBorder(int* param, int* val, int step){
     for(int i = 0; i < 3; i++){
+        int stepT = (i == 0) ? step : step*5;
         param[i] = val[i] + step;
         if(param[i] > 255)
             param[i] = 255;
@@ -127,15 +128,10 @@ bool compareContourAreas ( std::vector<cv::Point> contour1, std::vector<cv::Poin
 }
 
 cv::Vec3b Sequence::PixHsv(cv::Mat in, cv::Point pix){
-    //Vec3b pixelT = in.at<Vec3b>(pix.y, pix.x);
-    //Vec3b pixel;
-    //cvtColor(pixelT, pixel, COLOR_BGR2HSV);
-
-    //old way
+    Mat inTemp = in(Rect(pix.x, pix.y,1,1));
     Mat hsv;
-    cvtColor(in, hsv, COLOR_BGR2HSV);
-    Vec3b pixel = hsv.at<Vec3b>(pix.y, pix.x);
-
+    cvtColor(inTemp, hsv, COLOR_BGR2HSV);
+    Vec3b pixel = hsv.at<Vec3b>(0, 0);
     return pixel;
 }
 
@@ -147,9 +143,13 @@ cv::Mat Sequence::ColorMask2(cv::Mat in, cv::Vec3b hsvDel, int colorWide){
     CheckBorder(low, hsvPixel, -step);
     CheckBorder(high, hsvPixel, step);
 
-    Mat hsv, hsvMask;
-    cvtColor(in, hsv, COLOR_HSV2BGR);
+    Mat hsv, hsvMask, hsvM1, hsvM2;
+    cvtColor(in, hsv, COLOR_BGR2HSV);
     inRange(hsv, Scalar(low[0], low[1], low[2]), Scalar(high[0], high[1], high[2]), hsvMask);
+    //inRange(hsv, Scalar(low[0], 0, 0), Scalar(high[0], 255, 255), hsvMask);
+    //inRange(hsv, Scalar(0, 0, 0), Scalar(15, 255, 255), hsvM1);
+    //inRange(hsv, Scalar(165, 0, 0), Scalar(180, 255, 255), hsvM2);
+   // bitwise_or(hsvM1, hsvM2, hsvMask);
     imshow("inmask", hsvMask);
     //imwrite("log/point.jpg",hsvMask);
     return hsvMask;
@@ -172,16 +172,70 @@ void Sequence::DrawRotRect(cv::Mat image, std::vector<cv::Point> contours){
         line(image, points[i], points[(i+1)%4], cv::Scalar(255,255,255), 2);
 }
 
-int Sequence::GetHP(cv::Point pix){
+void Sequence::FindTarget(){
+    Mat edge;
+    Mat in = imread( "log/la2_2.jpg", IMREAD_GRAYSCALE);
+    Mat inRoi = in(Rect(350, 150, 600, 300));
+    //350 150 600 300
+    //for(int i = 0; i < 15; i++){
+        Canny(inRoi,edge,50, 500);
+        int morph_elem = 0;
+        int morph_size = 2;
+        Mat element = getStructuringElement( morph_elem, Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
+        morphologyEx(edge, edge, CV_MOP_CLOSE, element);
+        vector<vector<Point>> contours;
+        std::vector<cv::Vec4i> hierarchy;
+        findContours(edge,contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+        //sort(contours.begin(), contours.end(), compareContourAreas);
+        for(int i = 0; i < contours.size(); i++)
+            DrawRotRect(edge, contours[i]);
+        namedWindow("edge", CV_WINDOW_AUTOSIZE);
+        imshow("edge",edge);
+        waitKey(0);
+    //}
+}
+
+int Sequence::GetHP(Point pix){
     int debug = 1;
 
-    Mat in = imread( "log/statusbar.jpg");
-    cv::Vec3b hsvDel = PixHsv(in, pix);
-    Mat hsvMask = ColorMask2(in, hsvDel, 90);
-    if(debug){
-        namedWindow("red");
-        imshow("red",hsvMask);
+   // Mat in = imread( "log/statusbar.jpg");
+    Mat inBig = imread( "log/la2.jpg");//613 46 763 55
+    //Mat in2 = imread( "log/rainbow.png");//613 46 763 55
+    Mat in = inBig(Rect(610,41, 767 - 610, 60 - 41));
+    Mat inClust = ImgKmeans(in);
+    namedWindow("in", CV_WINDOW_AUTOSIZE);
+    imshow("in",inClust);
+    Vec3b hsvDel = PixHsv(inClust, Point(29,9));
+    Mat hsvMask = ColorMask2(inClust, hsvDel, 15);
+    /***********
+    for(int i = 0; i < 25; i++){
+        Mat rgb;
+        Mat hsv(1,1, CV_8UC3, Scalar(i*10,255,255));
+        cvtColor(hsv, rgb, COLOR_HSV2BGR);
+        circle(inBig, Point(200,200), 50, Scalar(rgb.data[0], rgb.data[1], rgb.data[2]), 20);
+        namedWindow("raw");
+        imshow("raw",inBig);
+        waitKey(200);
     }
+    return 0;*/
+    //Vec3b hsvPix = PixHsv(in2, Point(1600,150));
+   /* if(debug){
+        for(int i = 0; i < 240; i++){
+            //Mat hsvMask2 = ColorMask2(in2, hsvPix, 30);
+            Mat hsv, hsvMask2;
+            cvtColor(in, hsv, COLOR_HSV2BGR);
+            inRange(hsv, Scalar(i*1, 0, 0), Scalar((i+10)*1, 255, 255), hsvMask2);
+            qInfo("hue %d ", i*1);
+            namedWindow("red", CV_WINDOW_AUTOSIZE);
+            imshow("red",hsvMask2);
+            waitKey(200);
+        }
+        return 0;
+
+    }*/
+        namedWindow("red", CV_WINDOW_AUTOSIZE);
+        imshow("red",hsvMask);
+        waitKey(0);
     vector<vector<Point>> contours;
         findContours(hsvMask,contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
         Mat drawing = Mat::zeros( hsvMask.size(), CV_8UC3 );
@@ -212,9 +266,9 @@ int Sequence::GetHP(cv::Point pix){
 
 void Sequence::GetHP_MP(){
     double recLong[3];
-    recLong[0] = GetHP(cv::Point(76,18));
-    recLong[1] = GetHP(cv::Point(76,49));
-    recLong[2] = GetHP(cv::Point(76,80));
+    recLong[0] = GetHP(Point(76,18));
+    recLong[1] = GetHP(Point(76,49));
+    recLong[2] = GetHP(Point(76,80));
     qInfo("%.f %.f %.f", recLong[0]/197*50, recLong[1]/197*1000, recLong[2]/197*204);
 
 }
@@ -266,6 +320,33 @@ cv::Mat Sequence::ColorMask(cv::Mat input, cv::Scalar low, cv::Scalar high){
     erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
     dilate( imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
     return imgThresholded;
+}
+
+Mat Sequence::ImgKmeans(Mat src){
+    //Mat src = imread( "log/map_tank.jpg", 1 );
+    Mat samples(src.rows * src.cols, 3, CV_32F);
+    for( int y = 0; y < src.rows; y++ )
+      for( int x = 0; x < src.cols; x++ )
+        for( int z = 0; z < 3; z++)
+          samples.at<float>(y + x*src.rows, z) = src.at<Vec3b>(y,x)[z];
+
+
+    int clusterCount = 2;
+    Mat labels, centers;
+    int attempts = 5;
+    kmeans(samples, clusterCount, labels, TermCriteria(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 10000, 0.0001), attempts, KMEANS_PP_CENTERS, centers );
+
+
+    Mat new_image( src.size(), src.type() );
+    for( int y = 0; y < src.rows; y++ )
+      for( int x = 0; x < src.cols; x++ ){
+        int cluster_idx = labels.at<int>(y + x*src.rows,0);
+        for( int z = 0; z < 3; z++)
+            new_image.at<Vec3b>(y,x)[z] = centers.at<float>(cluster_idx, z);
+      }
+    return new_image;
+    //imshow( "clustered image", new_image );
+    //waitKey( 0 );
 }
 
 void Sequence::KmeansTest(){

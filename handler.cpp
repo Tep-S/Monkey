@@ -6,6 +6,7 @@ Handler::Handler(Stream* streamIn, Ui::MainWindow *uiIn)
     ui = uiIn;
     stream = streamIn;
     seq = new(Sequence);
+    act = new(ActionLog);
     //curve = new QCPCurve(ui->customPlot->xAxis, ui->customPlot->yAxis);
    //ui->customPlot->addPlottable(curve);
 }
@@ -92,6 +93,25 @@ void Handler::CharacterAngle(){
 
 }
 
+void Handler::La2(){
+    act->WindowsInfo();
+    while(1){
+        act->KeyPress(VK_LEFT, 3000);
+        //Point pnt = seq->objcoord
+        act->Click(1, 2);
+        int hp = 0;
+        if (hp){
+            act->KeyPress(VK_F1,100);
+        }
+    }
+    //rotate
+    //check for enemy
+    //click
+    //check for hp
+    //if not loop
+    //fight and loot
+}
+
 void Handler::TestDiff(){
     cv::Mat inputTest[3];
     qInfo("go");
@@ -170,69 +190,4 @@ while(1){
 void Handler::Result(){
 
 }
-
-BOOL CALLBACK EnumWindowsProc(HWND hWnd, long lParam) {
-    char buff[255];
-
-    if (IsWindowVisible(hWnd)) {
-        GetWindowTextA(hWnd, (LPSTR) buff, 254);
-        qInfo("%s", buff);
-        qInfo("visible");
-        //return FALSE;
-    }
-    return TRUE;
-}
-
-void Handler::WindowsInfo(){
-    EnumWindows(EnumWindowsProc, 0);
-   /*  // Получаем handle окна для последующего использования в функциях Win32 API
-     HWND hwndWin = GetActiveWindow();
-     char * caption = (char*)malloc(32 * sizeof(char));
-     // Получаем название окна в переменную caption
-     GetWindowTextA(hwndWin, caption, 32);
-     qInfo("%s", caption);*/
-     qInfo("end");
-}
-
-void Handler::KeyPress(int type, int msPress){
-/*#define VK_LEFT 0x25
-#define VK_UP 0x26
-#define VK_RIGHT 0x27
-#define VK_DOWN 0x28
-    */
-    int type2 = VK_DOWN;
-    keybd_event(type, 0, 0, 0);
-    Sleep(msPress);
-    if (msPress)
-        keybd_event(type, 0, KEYEVENTF_KEYUP, 0);
-}
-
-void Handler::Click(int x, int y)
-{
-    const double xScale = 65535 / (GetSystemMetrics(SM_CXSCREEN) - 1);
-    const double yScale = 65535 / (GetSystemMetrics(SM_CYSCREEN) - 1);
-
-    POINT cursorPos;
-    GetCursorPos(&cursorPos);
-
-    double cx = cursorPos.x * xScale;
-    double cy = cursorPos.y * yScale;
-
-    double nx = x * xScale;
-    double ny = y * yScale;
-
-    INPUT Input={0};
-    Input.type = INPUT_MOUSE;
-
-    Input.mi.dwFlags = MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP;
-    Input.mi.dx = (LONG)nx;
-    Input.mi.dy = (LONG)ny;
-    SendInput(1,&Input,sizeof(INPUT));
-
-    Input.mi.dx = (LONG)cx;
-    Input.mi.dy = (LONG)cy;
-    Input.mi.dwFlags = MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE;
-    SendInput(1,&Input,sizeof(INPUT));
-}
-
 

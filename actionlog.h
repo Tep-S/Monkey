@@ -21,11 +21,15 @@ public:
     ActionLog();
     void MouseHook();
     void ReleaseHook();
+    void Click(int x, int y);
+    void KeyPress(int type, int msPress);
+    void WindowsInfo();
 private:
     int startRec;
     vector<ActionParam> action;
     HHOOK mouseHook;
     LRESULT MouseHookCallback(int nCode, WPARAM wParam, LPARAM lParam);
+    //BOOL CALLBACK EnumWindowsProc(HWND hWnd, long lParam);
     void LeftButton();
 };
 
