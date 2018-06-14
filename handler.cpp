@@ -7,6 +7,7 @@ Handler::Handler(Stream* streamIn, Ui::MainWindow *uiIn)
     stream = streamIn;
     seq = new(Sequence);
     act = new(ActionLog);
+    glShift = cv::Point(0, 0);
     //curve = new QCPCurve(ui->customPlot->xAxis, ui->customPlot->yAxis);
    //ui->customPlot->addPlottable(curve);
 }
@@ -79,7 +80,7 @@ void Handler::CharacterAngle(){
     for(int i = 0; i < 360; i+=3){
         Mat r = getRotationMatrix2D(pc, i, 1.0);
         warpAffine(whiteMask, dst, r, whiteMask.size());
-        seq->TemplateCoord(dst, templ, 0.7, maxLock);
+        seq->MatchPixel(dst, templ, 0.7, maxLock);
         xPlot.append(i);
         yPlot.append(maxLock);
     }
@@ -93,16 +94,48 @@ void Handler::CharacterAngle(){
 
 }
 
+void Handler::Duck(){
+    //stream->imgMain
+    act->WindowsInfo(QString("FCEUX"));
+    cv::Mat hwndMat = act->Hwnd2mat();
+    glShift += act->HwndRoi();
+    qInfo("gl shift %d %d ", glShift.x, glShift.y);
+    double maxLock;
+    //cv::Mat templ = cv::imread("log/duck2/start.png", cv::IMREAD_GRAYSCALE);
+    cv::Point pnt = seq->MatchPixel(hwndMat, "log/duck2/start.png", 0.7, maxLock);
+    pnt += glShift;
+    qInfo("%d %d", pnt.x, pnt.y);
+    act->Click2(pnt.x, pnt.y);
+
+}
+
 void Handler::La2(){
-    act->WindowsInfo();
+    //cv::waitKey(3000);
+    act->WindowsInfo(QString("Google Chrome"));
     while(1){
-        act->KeyPress(VK_LEFT, 3000);
-        //Point pnt = seq->objcoord
-        act->Click(1, 2);
+        qInfo("loop");
+        act->KeyPress(VK_LEFT, 50);
+        cv::waitKey(1500);
+        cv::Mat hwndMat = act->Hwnd2mat();
+        glShift += act->HwndRoi();
+        qInfo("gl shift %d %d ", glShift.x, glShift.y);
+        cv::Point pnt = seq->FindTarget(hwndMat);
+        pnt += glShift;
+        qInfo("%d %d", pnt.x, pnt.y);
+        act->Click2(pnt.x, pnt.y);
+        cv::waitKey(50);
+        act->Click2(pnt.x, pnt.y + 50);
+        cv::waitKey(50);
+        act->Click2(pnt.x, pnt.y);
+        cv::waitKey(50);
+        act->Click2(pnt.x, pnt.y + 50);
         int hp = 0;
         if (hp){
             act->KeyPress(VK_F1,100);
         }
+        cv::waitKey(1000);
+        act->KeyPress(VK_F1,100);
+        cv::waitKey(15000);
     }
     //rotate
     //check for enemy
@@ -165,7 +198,7 @@ while(1){
     Mat templRes;
     resize(templ, templRes, Size(templ.cols*1.45, templ.rows*1.45));
     double maxLock;
-    Point point = seq->TemplateCoord(window,templRes, 0.4, maxLock);
+    Point point = seq->MatchPixel(window,templRes, 0.4, maxLock);
     if ( (point.x == 0) && (point.y == 0) ){
         continue;
     }

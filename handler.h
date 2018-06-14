@@ -24,6 +24,8 @@ public:
    // void KeyPress(int type, int msPress);
     void CharacterAngle();
     void La2();
+    void Duck();
+    cv::Point glShift;
 private:
     QCPCurve* curve;
     QVector<double> xPlot, yPlot;

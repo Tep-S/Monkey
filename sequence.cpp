@@ -61,6 +61,34 @@ void Sequence::ImgAct(int command, float* par, cv::Mat& outImg){
 
 }
 
+void Sequence::SobelDir(){
+    Mat img = imread( "log/cat.jpg", IMREAD_GRAYSCALE );
+    //Mat img = imread( "log/furr.png", IMREAD_GRAYSCALE );
+    Mat imgBlur, imgErode, xDer, yDer, xySobel, angleDir, absX, absY;
+    GaussianBlur(img, imgBlur, Size(31,31), 0, 0, BORDER_DEFAULT);
+
+    //int erosion_size = 6;
+    //Mat element = getStructuringElement( MORPH_RECT,Size( 2*erosion_size + 1, 2*erosion_size+1 ),Point( erosion_size, erosion_size ) );
+    //dilate(imgBlur, imgErode, element);
+    namedWindow("erode", 1);
+    imshow("erode", imgBlur);
+   // int morph_elem = 0;
+   // int morph_size = 7;//2
+   // Mat element = getStructuringElement( morph_elem, Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
+   //morphologyEx(img, imgBlur, CV_MOP_OPEN, element);
+
+    Sobel(imgBlur, xDer, CV_32FC1, 1, 0);
+    Sobel(imgBlur, yDer, CV_32FC1, 0, 1);
+    convertScaleAbs( xDer, absX);
+    convertScaleAbs( yDer, absY);
+    addWeighted( absX, 0.5, absY, 0.5, 0, xySobel );
+    namedWindow("grad", 1);
+    imshow("grad", xySobel);
+    //namedWindow("grad2", 1);
+    //imshow("grad2", absY);
+
+}
+
 void Sequence::Haar(){
     String face_cascade_name = "log/cascade_tank2.xml";
     CascadeClassifier face_cascade;
@@ -172,12 +200,17 @@ void Sequence::DrawRotRect(cv::Mat image, std::vector<cv::Point> contours){
         line(image, points[i], points[(i+1)%4], cv::Scalar(255,255,255), 2);
 }
 
-void Sequence::FindTarget(){
-    Mat edge;
-    Mat in = imread( "log/la2_2.jpg", IMREAD_GRAYSCALE);
-    Mat inRoi = in(Rect(350, 150, 600, 300));
-    //350 150 600 300
-    //for(int i = 0; i < 15; i++){
+Point Sequence::FindTarget(Mat in){
+    Mat edge, inRoiGray;
+   // Mat in = imread( "log/la2_2.jpg", IMREAD_GRAYSCALE);
+    int croppX = in.cols/6;
+    int croppY = in.rows/6;
+    Point croppPoint(croppX, croppY);
+    Mat inRoi = in(Rect(croppX, croppY, in.cols - croppX*2, in.rows - croppY*2));
+    qInfo("roi %d %d", inRoi.cols, inRoi.rows);
+    cvtColor(inRoi, inRoiGray, COLOR_BGR2GRAY);
+
+
         Canny(inRoi,edge,50, 500);
         int morph_elem = 0;
         int morph_size = 2;
@@ -186,13 +219,30 @@ void Sequence::FindTarget(){
         vector<vector<Point>> contours;
         std::vector<cv::Vec4i> hierarchy;
         findContours(edge,contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-        //sort(contours.begin(), contours.end(), compareContourAreas);
+        sort(contours.begin(), contours.end(), compareContourAreas);
+
         for(int i = 0; i < contours.size(); i++)
             DrawRotRect(edge, contours[i]);
+
+       // for(int i  = 0; i < contours.size(); i++)
+            RotatedRect rRect = minAreaRect(contours[contours.size()/2]);
+            Point2f points[4];
+            rRect.points(points);
+            int xAvg(0), yAvg(0);
+            for(int i = 0; i < 4; ++i){
+                xAvg += points[i].x;
+                yAvg += points[i].y;
+            }
+            Point retPoint = Point(xAvg/4, yAvg/4);
+       // }
+
+
+        circle(edge, retPoint, 30, Scalar(255, 255, 255));
         namedWindow("edge", CV_WINDOW_AUTOSIZE);
         imshow("edge",edge);
-        waitKey(0);
-    //}
+        waitKey(1000);
+        qInfo("point %d %d cropp %d %d", retPoint.x, retPoint.y, croppPoint.x, croppPoint.y);
+        return retPoint + croppPoint;
 }
 
 int Sequence::GetHP(Point pix){
@@ -478,16 +528,17 @@ void Sequence::MotionMask(cv::Mat input, cv::Mat outputMask){
 
 }
 
-cv::Point Sequence::FlannMatching(cv::Mat input, cv::Mat templateIn)
+Point Sequence::MatchFeature(Mat input, QString templName)
+{
+    Mat templ = imread( templName.toStdString(), IMREAD_GRAYSCALE );
+    MatchFeature(input, templ);
+}
+
+Point Sequence::MatchFeature(Mat input, Mat templateIn)
 {
     using namespace cv::xfeatures2d;
-    //Mat img_1   = input;//IMREAD_GRAYSCALE
-   //Mat img_2 = templateIn;//IMREAD_GRAYSCALE
-    //Mat img_1 = imread( "log/la2.jpg", IMREAD_GRAYSCALE );
-    //Mat img_2 = imread( "log/la2cropp.jpg", IMREAD_GRAYSCALE );
-
-    Mat img_1 = imread( "log/rural/rural1.jpg", IMREAD_GRAYSCALE );
-    Mat img_2 = imread( "log/rural/car2.jpg", IMREAD_GRAYSCALE );
+    Mat img_1 = input;
+    Mat img_2 = templateIn;
 
   if( !img_1.data || !img_2.data ){
       qInfo("read error");
@@ -541,17 +592,20 @@ cv::Point Sequence::FlannMatching(cv::Mat input, cv::Mat templateIn)
       pAvg += (Point2d)keypoints_1[good_matches[i].queryIdx].pt;
 
   return Point(pAvg);
-  Point roiCenter(pAvg.x / matchSize, pAvg.y / matchSize);
+
+/*  Point roiCenter(pAvg.x / matchSize, pAvg.y / matchSize);
   circle(img_matches, roiCenter, 50, Scalar(255,0,0));
   imshow( "Good Matches", img_matches );
   waitKey(0);
-
-/*
-  return 0;
   */
 }
 
-cv::Point Sequence::TemplateCoord(cv::Mat img, cv::Mat templ, double thresh, double& maxLock){
+Point Sequence::MatchPixel(Mat img, QString templName, double thresh, double& maxLock){
+        Mat templ = imread(templName.toStdString(), IMREAD_GRAYSCALE);
+        MatchPixel(img, templ, thresh, maxLock);
+}
+
+Point Sequence::MatchPixel(Mat img, Mat templ, double thresh, double& maxLock){
     Mat result;
     int match_method = 5;
 

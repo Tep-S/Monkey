@@ -29,12 +29,17 @@ cv::Mat Stream::GetAdditionalScreen(){
 }
 
 cv::Mat Stream::GetScreen(){
-    QPixmap screenshot  = QPixmap::grabWindow(QApplication::desktop()->winId());
+    QImage imgScreen  = QPixmap::grabWindow(QApplication::desktop()->winId()).toImage();
+    imgMain = cv::Mat(imgScreen.height(), imgScreen.width(), CV_8UC4, const_cast<uchar*>(imgScreen.bits()), imgScreen.bytesPerLine());//imgScreen.scanLine());
+    return imgMain;
+
+    /*QPixmap screenshot  = QPixmap::grabWindow(QApplication::desktop()->winId());
     //QScreen screen = QScreen::grabWindow(QApplication::desktop()->winId());
     QImage imgScreen    = screenshot.toImage();
     cv::Mat matScreen(imgScreen.height(), imgScreen.width(), CV_8UC4, const_cast<uchar*>(imgScreen.bits()), imgScreen.bytesPerLine());//imgScreen.scanLine());
     imgMain = matScreen.clone();
     return imgMain;
+    */
 }
 
 void Stream::GetFrame(){

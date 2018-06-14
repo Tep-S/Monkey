@@ -46,8 +46,10 @@ public:
     void    LoadSequence(QString filename);
     void    ImgAct(int command, float *par, cv::Mat &outImg);
     void    Draw();
-    cv::Point TemplateCoord(cv::Mat img, cv::Mat templ, double thresh, double& maxLock);
-    cv::Point FlannMatching(cv::Mat input, cv::Mat templateIn);
+    cv::Point MatchPixel(cv::Mat img, cv::Mat templ, double thresh, double& maxLock);
+    cv::Point MatchPixel(cv::Mat img, QString templName, double thresh, double& maxLock);
+    cv::Point MatchFeature(cv::Mat input, QString templName);
+    cv::Point MatchFeature(cv::Mat input, cv::Mat templateIn);
     void    FindRoad(cv::Mat input);
     cv::Mat ColorMask(cv::Mat input, cv::Scalar low, cv::Scalar high);
     void    FindRect(cv::Mat input);
@@ -60,7 +62,8 @@ public:
     cv::Mat ColorMask2(cv::Mat in, cv::Vec3b hsvDel, int colorWide);
     void DrawRotRect(cv::Mat image, std::vector<cv::Point> contours);
     cv::Mat ImgKmeans(cv::Mat src);
-    void FindTarget();
+    cv::Point FindTarget(cv::Mat in);
+    void SobelDir();
 private:
     cv::Mat img;
     cv::Mat imgClean;

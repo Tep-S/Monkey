@@ -18,6 +18,61 @@
 
 enum{ DESCR_GOOD, DESCR_BAD};
 
+void TestFolder(QString mainPath, Sequence* seq);
+void CreateFilesDescriptor(QString mainPath, QString destPath, int type);
+void HaarTests(Sequence* seq);
+
+
+
+
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent),
+    ui(new Ui::MainWindow),
+    seq(new Sequence()),
+    stream(new Stream()),
+    handler(new Handler(stream, ui))
+{
+    ui->setupUi(this);
+    Plots();
+    //seq->GetHP(Point(450, 750));
+    //seq->FindTarget();
+    //ActionLog actlog;
+    //actlog.KeyPress(1, 2);
+    //seq->ImgKmeans();
+    //handler->MouseHookTest();
+    //HaarTests(seq);
+   // handler->CharacterAngle();
+    //LuaPusher pusher;
+
+    cv::Mat one, two;
+    //seq->FlannMatching(one, two);
+    /*seq->MotionMask(one, two); last in use*/
+    //seq->KmeansTest();
+    //Reader reader;
+    //Tests();
+    //actlog.WindowsInfo();
+    //actlog.KeyPress(1, 2);
+    //stream->start();
+    handler->Duck();
+    //seq->SobelDir();
+    //handler->start();
+    /*while(1){
+        handler->Click(300,300);
+        QThread::msleep(1000);
+    }*/
+    //for(int i = 0; i < 5; i++)
+    //    handler->TestDiff();
+    //seq->FindRect(temp);
+   // seq->GetHP_MP();
+    // cv::Mat test;
+    //seq->FlannMatching(test, test);
+
+    Connects();
+
+
+
+}
+
 void TestFolder(QString mainPath, Sequence* seq){
     using namespace std;
     using namespace cv;
@@ -110,51 +165,6 @@ void HaarTests(Sequence* seq){
     //CreateFilesDescriptor(screenPath, destFile, type);
     //opencv_traincascade.exe -data haarcascade -vec samples.vec -bg bad.txt -numStages 16 -minhitrate
     //0.999 -maxFalseAlarmRate 0.4 -numPos 312 -numNeg 911 -w 20 -h 20 -mode ALL -precalcValBufSize 2048 -precalcIdxBufSize 2048
-}
-
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    seq(new Sequence()),
-    stream(new Stream()),
-    handler(new Handler(stream, ui))
-{
-    ui->setupUi(this);
-    Plots();
-    //seq->GetHP(Point(450, 750));
-    seq->FindTarget();
-    //ActionLog actlog;
-    //actlog.KeyPress(1, 2);
-    //seq->ImgKmeans();
-    //handler->MouseHookTest();
-    //HaarTests(seq);
-   // handler->CharacterAngle();
-    //LuaPusher pusher;
-
-    cv::Mat one, two;
-    //seq->FlannMatching(one, two);
-    /*seq->MotionMask(one, two); last in use*/
-    //seq->KmeansTest();
-    //Reader reader;
-    //Tests();
-    //actlog.WindowsInfo();
-    //actlog.KeyPress(1, 2);
-   // stream->start();
-    //handler->start();
-    /*while(1){
-        handler->Click(300,300);
-        QThread::msleep(1000);
-    }*/
-    //for(int i = 0; i < 5; i++)
-    //    handler->TestDiff();
-    //seq->FindRect(temp);
-   // seq->GetHP_MP();
-    // cv::Mat test;
-    //seq->FlannMatching(test, test);
-
-    Connects();
-
-
 }
 
 
